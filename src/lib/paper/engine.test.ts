@@ -1,0 +1,18 @@
+import {describe,it,expect} from 'vitest';
+import {newLedger,validateProposal,execute,account,mark} from './engine';
+import type {Decision,Evidence,Quote} from './engine';
+const evidence:Evidence[]=[{ticker:'ABC',name:'Test fixture',sourceUrl:'https://www.sec.gov/',filed:'2026-10-28',period:'2026-09-30',revenue:100,operatingIncome:20,margin:20,revenueGrowth:10,marginChange:1,caveats:[]}];
+const decision:Decision={id:'day:growth:v1',day:'2026-10-28',strategy:'growth',at:'2026-10-28T15:00:00Z',model:'fixture',version:'v1',summary:'Test only',evidence,picks:[{ticker:'ABC',weight:20,thesis:'Test',countercase:'Test',invalidate:'Test',horizon:'3–12 months',evidence:['ABC']}]};
+const quote:Quote={bid:99,ask:100,at:'2026-10-28T15:00:01Z',bidSize:1000,askSize:1000};
+const now='2026-10-28T15:00:10Z';
+function run(q=quote,open=true,d=decision){return execute({...newLedger(),decisions:[d]},d,{ABC:q},now,open);}
+describe('paper ledger invariants',()=>{
+ it('validates citations, exposure and the allowed universe',()=>{expect(validateProposal(decision,evidence).picks).toHaveLength(1);for(const change of [{ticker:'FAKE'},{weight:21},{weight:NaN},{evidence:['FAKE']},{horizon:'tomorrow'}])expect(()=>validateProposal({...decision,picks:[{...decision.picks[0],...change}]},evidence)).toThrow();expect(()=>validateProposal({...decision,picks:[decision.picks[0],decision.picks[0]]},evidence)).toThrow();});
+ it('records buys at post-decision ask plus slippage and conserves cash',()=>{const l=run();expect(l.fills).toHaveLength(1);const a=account(l,'growth');expect(l.fills[0].price).toBeCloseTo(100.05);expect(a.positions.ABC).toBe(199);expect(a.cash+199*100.05).toBeCloseTo(100000);expect(a.cash).toBeGreaterThan(0);});
+ it('retries are idempotent and do not mutate the input',()=>{const first=run();const second=execute(first,decision,{ABC:quote},now,true);expect(second).toEqual(first);expect(first.fills).toHaveLength(1);});
+ it('blocks closed markets, stale quotes, future quotes, wide spreads, and missing liquidity',()=>{expect(run(quote,false).fills).toHaveLength(0);for(const q of [{...quote,at:'2026-10-28T14:59:00Z'},{...quote,at:'2026-10-28T15:00:50Z'},{...quote,at:decision.at},{...quote,bid:50},{...quote,askSize:0},{...quote,askSize:1}]){const l=run(q);expect(l.fills).toHaveLength(0);expect(l.attempts.at(-1)?.status).toBe('blocked');}});
+ it('sells before buying, never shorts and balances a liquidation',()=>{const first=run();const exit={...decision,id:'exit',at:'2026-10-28T15:01:00Z',picks:[]};const next=execute(first,exit,{ABC:{...quote,at:'2026-10-28T15:01:01Z'}},'2026-10-28T15:01:05Z',true);expect(account(next,'growth').positions).toEqual({});expect(next.fills[1].side).toBe('sell');expect(account(next,'growth').cash).toBeCloseTo(100000-199*100.05+199*99*.9995);});
+ it('does not partially fill a rebalance if another quote fails',()=>{const d={...decision,picks:[...decision.picks,{...decision.picks[0],ticker:'DEF'}]};const l=run(quote,true,d);expect(l.fills).toHaveLength(0);expect(account(l,'growth').cash).toBe(100000);});
+ it('marks at executable bid, refuses stale marks and preserves independent accounts',()=>{const l=run();const marked=mark(l,'growth',{ABC:quote},now);expect(marked.marks[0].equity).toBeCloseTo(account(l,'growth').cash+199*99);expect(account(l,'quality').cash).toBe(100000);expect(()=>mark(l,'growth',{},now)).toThrow();});
+ it('rejects expired decisions and keeps their proposal',()=>{const d={...decision,at:'2026-10-25T15:00:00Z'};const l=run(quote,true,d);expect(l.fills).toHaveLength(0);expect(l.decisions).toHaveLength(1);expect(l.attempts[0].reason).toContain('expired');});
+});

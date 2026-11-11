@@ -1,0 +1,16 @@
+import {describe,it,expect} from 'vitest';
+import {features,interestMatch,parseInterests,rankForYou,researchCase,type Interests} from './research-interests';
+import type {CompanyResearchLive} from './live-research-types';
+const company=(ticker:string,growth=20,margin=15,pe:number|null=20):CompanyResearchLive=>({ticker,name:ticker,cik:ticker,exchange:'NYSE',fetchedAt:'2026-10-30',latestFilingDate:'2026-10-29',latestFilingForm:'10-Q',periodEnd:'2026-09-30',quarters:[{start:'2026-07-01',end:'2026-09-30',revenue:100,operatingIncome:margin,netIncome:10,operatingMargin:margin,filed:'2026-10-29',accession:'x',sourceUrl:'https://www.sec.gov/test',sources:{}}],signals:[{id:'growth',title:'Growth',explanation:'Measured',tone:'positive',revenueGrowth:growth,marginChangePp:3,operatingIncomeGrowth:5}],valuation:{market:null,marketCap:1e9,pe,ps:2,fcfYield:4,warnings:[]},sourceUrl:'https://www.sec.gov/test',stale:false,warnings:[],caveats:[]});
+const profile:Interests={SAVED:{action:'save',features:['growth'],at:'2026-10-30'}};
+describe('private discovery learning',()=>{
+ it('ranks companies matching an active save above unrelated evidence',()=>{expect(rankForYou([company('SLOW',2),company('FAST')],profile,['SAVED'],[])[0].ticker).toBe('FAST');});
+ it('removing a save removes its positive learning influence',()=>{expect(interestMatch(company('X'),profile,[]).score).toBe(0);});
+ it('dismissal reduces related ideas but known is not a negative preference',()=>{const a={...profile,BAD:{action:'dismiss' as const,features:['growth'],at:''}};expect(interestMatch(company('X'),a,['SAVED']).score).toBeLessThan(interestMatch(company('X'),profile,['SAVED']).score);expect(interestMatch(company('X'),{KNOWN:{action:'known',features:['growth'],at:''}},[]).score).toBe(0);});
+ it('excludes saved, dismissed, and explicitly known companies',()=>{expect(rankForYou([company('SAVED'),company('NO'),company('KNOWN'),company('NEW')],{NO:{action:'dismiss',features:[],at:''},KNOWN:{action:'known',features:[],at:''}},['SAVED'],[]).map(c=>c.ticker)).toEqual(['NEW']);});
+ it('reserves the fourth slot for an unrelated company when available',()=>{const rows=rankForYou(['A','B','C','D','E'].map(t=>company(t)).concat(company('EXPLORE',2)),profile,['SAVED'],[]);expect(rows[3].ticker).toBe('EXPLORE');});
+ it('does not infer value or size from missing or nonpositive values',()=>{const c=company('X',2,4,null);c.valuation!.marketCap=null;c.valuation!.fcfYield=null;expect(features(c)).not.toContain('value');expect(features(c)).not.toContain('small');});
+ it('prefers not-opened companies but never claims real-world obscurity',()=>{expect(rankForYou([company('OPENED'),company('NEW')],{},[],['OPENED'])[0].ticker).toBe('NEW');});
+ it('keeps a declining business countercase and measured evidence',()=>{const result=researchCase(company('X',-12));expect(result.case).toContain('fell 12.0%');expect(result.caution).toContain('shrinking');expect(result.url).toBe('https://www.sec.gov/test');});
+ it('round trips bounded feedback and drops invalid records',()=>{const raw=JSON.stringify({version:1,items:{...profile,bad:{action:'whatever'},OK:{action:'known',features:['invented','growth'],at:''}}});expect(parseInterests(raw)).toEqual({...profile,OK:{action:'known',features:['growth'],at:''}});expect(parseInterests('{')).toEqual({});});
+});

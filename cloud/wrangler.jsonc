@@ -1,0 +1,26 @@
+{
+  "name": "bullproof-paper-runner",
+  "main": "worker.ts",
+  "compatibility_date": "2026-10-28",
+  "workers_dev": true,
+  "ai": {
+    "binding": "AI"
+  },
+  "vars": {
+    "ENABLED": "true",
+    "RESEARCH_URL": "https://bullproof.vercel.app"
+  },
+  "triggers": {
+    "crons": [
+      "5,35 13-21 * * MON-FRI"
+    ]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bullproof-paper",
+      "database_id": "968495e4-7247-462d-a61b-f463bd44da9f"
+    }
+  ],
+  "account_id": "08ce6def9e624ec90005a5fd36ad4232"
+}

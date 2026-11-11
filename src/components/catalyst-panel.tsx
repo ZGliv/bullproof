@@ -1,0 +1,42 @@
+'use client';
+import {useCallback,useEffect,useRef,useState} from 'react';
+import {ArrowUpRight,RefreshCw} from 'lucide-react';
+import {estimatedWeek,priorityNews,type CompanyCatalysts,type CatalystResponse,type EarningsEvent} from '@/lib/catalysts';
+import type {CompanyResearchLive} from '@/lib/live-research-types';
+import './catalyst-panel.css';
+const date=(value:string)=>new Date(value.length===10?value+'T12:00:00Z':value).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'America/New_York'});
+export function earningsLabel(e:EarningsEvent){return e.status==='estimated'?`${estimatedWeek(e.date)} · estimated week`:`${date(e.date)} · ${e.event==='call'?'earnings call':'results'} schedule`;}
+export function useCatalysts(symbolKey:string,focus:string){
+ const [values,setValues]=useState<Record<string,CompanyCatalysts>>({}),[error,setError]=useState(''),[loading,setLoading]=useState(false),[revision,setRevision]=useState(0);
+ const fetched=useRef(new Map<string,number>()),focused=useRef(new Map<string,number>());
+ const refresh=useCallback(()=>{fetched.current.clear();focused.current.clear();setRevision(v=>v+1);},[]);
+ useEffect(()=>{const controller=new AbortController();async function load(){
+  const all=symbolKey.split(',').filter(Boolean),needsFocus=focus&&!focused.current.has(focus);const wanted=all.filter(s=>!fetched.current.has(s)||Date.now()-fetched.current.get(s)!>15*60000);if(needsFocus&&!wanted.includes(focus))wanted.unshift(focus);if(!wanted.length)return;
+  setLoading(true);setError('');try{for(let i=0;i<wanted.length;i+=12){const batch=wanted.slice(i,i+12),p=new URLSearchParams({symbols:batch.join(',')});if(focus&&batch.includes(focus))p.set('focus',focus);const r=await fetch(`/api/catalysts?${p}`,{cache:'no-store',signal:controller.signal});if(!r.ok)throw new Error('Could not refresh catalysts. Retry below; financial research remains available.');const data=await r.json() as CatalystResponse;if(controller.signal.aborted)return;for(const ticker of Object.keys(data.companies)){fetched.current.set(ticker,Date.now());if(ticker===focus)focused.current.set(ticker,Date.now());}setValues(old=>({...old,...data.companies}));}}catch(e){if(!controller.signal.aborted)setError(e instanceof Error?e.message:'Catalysts unavailable');}finally{if(!controller.signal.aborted)setLoading(false);}
+ }void load();return()=>controller.abort();},[symbolKey,focus,revision]);
+ useEffect(()=>{const timer=setInterval(()=>{if(document.visibilityState==='visible')refresh();},15*60000);return()=>clearInterval(timer);},[refresh]);
+ return {values,error,loading,refresh};
+}
+export function EarningsCheckpoint({data}:{data?:CompanyCatalysts}){
+ if(!data)return <p>Checking the earnings calendar and reported announcements…</p>;
+ const e=data.earnings;
+ return <div className="cat-calendar"><strong>{e?earningsLabel(e):data.calendarStatus==='unavailable'?'Calendar unavailable':'Next date not verified'}</strong><p>{e?.status==='estimated'?'SEC-pattern estimate · unconfirmed':e?'Reported schedule':'No verified date'}</p>{e&&<a href={e.url} target="_blank" rel="noreferrer">{e.source}<ArrowUpRight size={12}/></a>}{e?.basis&&<small>Estimate reference: {date(e.basis)}</small>}<small><a href="https://xoomar.com/markets/earnings" target="_blank" rel="noreferrer">Data: XOOMAR</a> · Earnings dates: SEC. {data.calendarUpdatedAt?`Source record dated ${date(data.calendarUpdatedAt.slice(0,10))}.`:''}</small>{data.warnings.filter(w=>/calendar estimate|calendar record|conflict|schedule change/.test(w)).map(w=><p key={w} className="cat-warning">{w}</p>)}</div>;
+}
+export function CatalystPanel({data,compact=false,error='',loading=false,onRetry}:{data?:CompanyCatalysts;compact?:boolean;error?:string;loading?:boolean;onRetry?:()=>void}){
+ const ordered=data?[...priorityNews(data.news),...data.news.filter(n=>!priorityNews(data.news).some(p=>p.id===n.id))]:[];
+ const news=compact?priorityNews(data?.news??[]).slice(0,1):ordered.slice(0,2);
+ const remaining=compact?[]:ordered.slice(2);
+ return <section className={`catalyst-panel ${compact?'cat-compact':''}`} aria-label="Why pay attention now"><header><h2>{compact?"Latest news":"News & earnings"}</h2>{!compact&&onRetry&&<button onClick={onRetry} disabled={loading} aria-label="Refresh catalysts"><RefreshCw size={13}/></button>}</header>
+  {!compact&&(data?.earnings?<EarningsCheckpoint data={data}/>:<details className="ah-calendar-details"><summary>Next earnings · {loading?"checking":"unverified"}</summary><EarningsCheckpoint data={data}/></details>)}
+  {error?<p className="cat-warning" role="status">{error}{onRetry&&<button onClick={onRetry} disabled={loading}>Retry</button>}</p>:null}
+  {!data&&!error?<p className="cat-muted">Checking dated company news…</p>:news.length?<div className="cat-news">{news.map(n=><article key={n.id}><div className="cat-news-meta"><span className={n.kind==='Guidance'?'cat-alert':''}>{n.kind}</span><time dateTime={n.publishedAt}>{date(n.publishedAt)}</time></div><a href={n.url} target="_blank" rel="noreferrer">{n.headline}<ArrowUpRight size={13}/></a><small>{n.source} · via Alpaca news</small></article>)}</div>:<p className="cat-muted">{data?.newsStatus==='unavailable'?'News unavailable. No conclusion about catalysts can be drawn.':compact?'No company-specific headline found in the last seven days.':'No company-specific articles found in this bounded news scan.'}</p>}
+  {!!remaining.length&&<details className="cat-more"><summary>All recent reports · {ordered.length} articles</summary><div className="cat-news">{remaining.map(n=><article key={n.id}><div className="cat-news-meta"><span>{n.kind}</span><time>{date(n.publishedAt)}</time></div><a href={n.url} target="_blank" rel="noreferrer">{n.headline}<ArrowUpRight size={12}/></a><small>{n.source} · via Alpaca news</small></article>)}</div></details>}
+  {!compact&&<footer><span>{data?`News checked ${new Date(data.checkedAt).toLocaleString()}. `:''}Delayed sources</span>{data?.warnings.filter(w=>!/calendar estimate|calendar record|conflict|schedule change/.test(w)).map(w=><p key={w}>{w}</p>)}</footer>}
+ </section>;
+}
+export function CatalystRadar({companies,values,onSelect,loading,error,onRetry}:{companies:CompanyResearchLive[];values:Record<string,CompanyCatalysts>;onSelect:(c:CompanyResearchLive)=>void;loading:boolean;error:string;onRetry:()=>void}){
+ const [expanded,setExpanded]=useState(false);
+ const events=companies.flatMap(c=>{const data=values[c.ticker],n=data?priorityNews(data.news)[0]:null;return n?[{c,n}]:[];}).sort((a,b)=>a.n.priority-b.n.priority||b.n.publishedAt.localeCompare(a.n.publishedAt)).slice(0,5);
+ const shown=expanded?events:events.slice(0,3);
+ return <section className="catalyst-radar cat-discovery-leads" aria-label="Research starting points"><header><div><h2>Company news <span className="cat-window">7D</span></h2></div><button onClick={onRetry} disabled={loading}><RefreshCw size={12}/>{loading?'Checking news…':'Refresh news'}</button></header>{error&&<p className="cat-warning">{error}</p>}{shown.length?<div>{shown.map(({c,n})=><button className="cat-lead" key={c.ticker} onClick={()=>onSelect(c)} aria-label={`Research ${c.ticker}: ${n.headline}`}><span className="cat-lead-company"><strong>{c.ticker}</strong><span>{c.name}</span><small>{c.context?.industry??c.exchange}</small></span><span className="cat-lead-event"><span className="cat-lead-meta"><span className={n.kind==='Guidance'?'cat-alert':''}>{n.kind}</span><time dateTime={n.publishedAt}>{date(n.publishedAt)}</time><span>{n.source}</span></span><strong title={n.headline}>{n.headline.split(';')[0]}</strong><span className="cat-lead-facts"><span><small>Sales YoY</small><b>{c.signals[0]?.revenueGrowth==null?'—':`${c.signals[0].revenueGrowth>0?'+':''}${c.signals[0].revenueGrowth.toFixed(1)}%`}</b></span><span><small>Op. margin</small><b>{c.quarters.at(-1)?.operatingMargin==null?'—':`${c.quarters.at(-1)!.operatingMargin!.toFixed(1)}%`}</b></span><span><small>P/E · TTM</small><b>{c.valuation?.pe==null?'—':`${c.valuation.pe.toFixed(1)}×`}</b></span></span></span><span className="cat-lead-action">Brief <ArrowUpRight size={16}/></span></button>)}</div>:<p className="cat-muted">{loading?'Loading company news…':'No company-specific reports in this scan · past 7 days'}</p>}{events.length>3&&<button className="cat-show-more" onClick={()=>setExpanded(v=>!v)}>{expanded?'Show less':`+${events.length-3} more`}</button>}</section>;
+}

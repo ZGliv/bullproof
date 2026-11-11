@@ -1,0 +1,5 @@
+import {afterEach,it,expect,vi} from 'vitest';
+import {GET} from './route';
+afterEach(()=>{vi.unstubAllGlobals();vi.unstubAllEnvs();});
+it('retries a transient hosted failure and returns only the hosted snapshot',async()=>{vi.stubEnv('BULLPROOF_RUNNER_URL','https://example.workers.dev');const fetch=vi.fn().mockResolvedValueOnce(new Response('',{status:503})).mockResolvedValueOnce(Response.json({updatedAt:'hosted',fills:[{id:'real-fill'}]}));vi.stubGlobal('fetch',fetch);const response=await GET();expect(response.status).toBe(200);expect((await response.json()).fills).toEqual([{id:'real-fill'}]);expect(fetch).toHaveBeenCalledTimes(2);});
+it('returns unavailable instead of stale bundled history after both failures',async()=>{vi.stubEnv('BULLPROOF_RUNNER_URL','https://example.workers.dev');const fetch=vi.fn().mockRejectedValue(new Error('timeout'));vi.stubGlobal('fetch',fetch);const response=await GET();expect(response.status).toBe(503);expect((await response.json()).fills).toBeUndefined();expect(fetch).toHaveBeenCalledTimes(2);});

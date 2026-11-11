@@ -1,0 +1,11 @@
+node_modules/
+.next/
+.git/
+.env*
+*.tsbuildinfo
+output/
+.playwright-cli/
+.paper/
+cloud/
+.dev.vars*
+.wrangler/

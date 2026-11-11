@@ -1,0 +1,15 @@
+import fs from 'node:fs/promises';
+import sharp from 'sharp';
+const svg = await fs.readFile('public/brand/bullproof.svg');
+await fs.mkdir('public/icons', {recursive:true});
+for (const size of [32,180,192,512]) await sharp(svg).resize(size,size).flatten({background:'#233d30'}).png().toFile(`public/icons/bullproof-${size}.png`);
+await fs.copyFile('public/icons/bullproof-180.png','public/apple-touch-icon.png');
+await fs.copyFile('public/icons/bullproof-180.png','src/app/apple-icon.png');
+await fs.copyFile('public/brand/bullproof.svg','public/icon.svg');
+await fs.copyFile('public/brand/bullproof.svg','src/app/icon.svg');
+const images = await Promise.all([16,32,48].map(size => sharp(svg).resize(size,size).png().toBuffer()));
+const head = Buffer.alloc(6 + 16*images.length);head.writeUInt16LE(1,2);head.writeUInt16LE(images.length,4);
+let offset=head.length;
+images.forEach((image,i)=>{const p=6+i*16;head[p]=[16,32,48][i];head[p+1]=head[p];head.writeUInt16LE(1,p+4);head.writeUInt16LE(32,p+6);head.writeUInt32LE(image.length,p+8);head.writeUInt32LE(offset,p+12);offset+=image.length;});
+await fs.writeFile('src/app/favicon.ico',Buffer.concat([head,...images]));
+console.log('Exported opaque Safari and manifest icons, SVG and ICO.');

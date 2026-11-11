@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-29T01:30:00Z",
+  "title": "Design System: Bullproof research terminal",
+  "extensions": {
+    "breakpoints": [
+      {
+        "name": "horizontal-rail",
+        "value": "1150px"
+      },
+      {
+        "name": "stack-workspace",
+        "value": "800px"
+      }
+    ]
+  },
+  "narrative": {
+    "northStar": "Chart-first research terminal",
+    "overview": "User-selected dark terminal references supersede Atlas/Journal. Keep real research and source attribution.",
+    "keyCharacteristics": [
+      "Compact",
+      "Chart-led",
+      "Dark throughout"
+    ],
+    "dos": [
+      "Keep market and financial data distinct",
+      "Preserve saved research"
+    ],
+    "donts": [
+      "Invent order-book or trading data",
+      "Use light editorial briefs"
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+/* Keep prior research and market movers within the same terminal identity. */
+.app-shell{--background:#11110f;--surface:#151512;--surface-strong:#1b1b17;--ink:#eeeade;--muted:#aaa99f;--muted-strong:#b6c1cb;--line:#30302a;--line-strong:#46443b;--accent:#20d99a;--accent-dark:#65e6bc;--accent-soft:#17382e;--gain:#24cfa0;--gain-soft:#17382e;--loss:#f16f7c;--loss-soft:#39232c;--warning:#efbc74;--warning-soft:#352d20;--radius-sm:4px;--radius-md:5px;--radius-lg:5px;--shadow:none;background:var(--background);color:var(--ink);min-height:100vh;color-scheme:dark}
+.app-shell .site-header{background:#11110f;border-color:var(--line);min-height:64px}
+.app-shell .site-header nav{font-size:14px}
+.app-shell .brand{font-size:22px;letter-spacing:-.035em}
+.app-shell main{width:calc(100% - 40px);max-width:1440px}
+.app-shell .hero-section{min-height:0;padding:36px 0;gap:36px;grid-template-columns:minmax(0,1fr) 320px;border-bottom:1px solid var(--line)}
+.app-shell .hero-grid-lines,.app-shell .section-kicker{display:none}
+.app-shell .hero-copy h1{font-size:32px;line-height:1.2;font-weight:500;letter-spacing:-.025em}
+.app-shell .hero-copy>p{font-size:16px;max-width:65ch;line-height:1.6;margin-top:16px}
+.app-shell .hero-research-actions{margin-top:20px;gap:16px}
+.app-shell .hero-research-actions .text-button{margin:0;padding:12px 0;border:0;width:auto;font-size:13px}
+.app-shell .period-card{background:var(--surface);box-shadow:none;padding:18px;border:1px solid var(--line);border-radius:5px}
+.app-shell .period-card::before,.app-shell .period-card::after{display:none}
+.app-shell .period-switch{background:#11110f;border-color:var(--line)}
+.app-shell .period-switch button.active{background:#17382e;color:#65e6bc}
+.app-shell .snapshot-section,.app-shell .movers-section,.app-shell .signals-section{padding-top:32px}
+.app-shell .section-heading h2{font-size:22px;font-weight:500;letter-spacing:-.02em}
+.app-shell .stat-card{min-height:130px;padding:20px}
+.app-shell .stat-card .stat-icon{display:none}
+.app-shell .stat-card>span,.app-shell .stat-card small{font-size:12px}
+.app-shell :is(.mover-panel,.idea-card,.snapshot-grid,.research-case-card){border-radius:5px;box-shadow:none}
+.app-shell .mover-table :is(th,td){font-size:13px;padding-block:14px}
+.app-shell .stock-identity small{font-size:12px}
+.app-shell :is(.research-save,.watch-button,.period-switch button){border-radius:4px}
+.app-shell .research-save{color:#06261d;background:#20d99a;font-size:13px}
+.app-shell .methodology-section{margin:32px 0;padding:28px;background:var(--surface);border:1px solid var(--line);border-radius:5px}
+.app-shell .methodology-intro h2{font-size:26px;letter-spacing:-.02em}
+.app-shell .methodology-intro p,.app-shell .method-steps p{font-size:14px;line-height:1.7}
+.app-shell .disclosure-section{margin:24px 0;padding:24px;border-radius:5px}
+.app-shell .disclosure-section p,.app-shell footer p{font-size:12px;line-height:1.6}
+.app-shell .detail-drawer,.app-shell .research-dialog{background:var(--surface);color:var(--ink)}
+.app-shell .detail-metrics>div,.app-shell .evidence-list li{background:#1b1b17}
+.app-shell .risk-section{background:#29241b;border-color:#5a4930}
+.app-shell :is(input,textarea,select){color:var(--ink);background:var(--background)}
+.app-shell ::selection{background:#246650;color:#fff}
+.discovery-app{--r-bg:#11110f;--r-paper:#151512;--r-ink:#eeeade;--r-muted:#aaa99f;--r-line:#30302a;--r-green:#65e6bc;--r-soft:#17382e;--r-negative:#f16f7c;background:var(--r-bg);color:var(--r-ink);color-scheme:dark}
+.discovery-app :is(.r-top,.r-rail,.r-footer){background:#11110f;border-color:var(--r-line)}
+.discovery-app .r-rail nav a[aria-current=page]{background:#17382e;color:#65e6bc}
+.discovery-app .r-main{padding-top:30px}
+.discovery-app .r-kicker{display:none}
+.discovery-app h1{font-size:30px;font-weight:500;letter-spacing:-.025em}
+.discovery-app .r-page-heading p{font-size:15px}
+.discovery-app :is(.r-catalysts,.r-company-card,.r-panel,.r-checkpoint,.r-empty,.r-discovery-board){background:var(--r-paper);border-color:var(--r-line);border-radius:5px;box-shadow:none}
+.discovery-app .r-catalysts{background:none;border:0;border-top:1px solid var(--r-line);padding:24px 0}
+.discovery-app :is(.r-date-grid,.r-catalysts,.r-method,.r-footer) :is(p,small,span){color:var(--r-muted)}
+.discovery-app .r-filters button[aria-pressed=true]{background:#17382e;color:#65e6bc;border-color:#38584c}
+.discovery-app .r-search input,.discovery-app textarea{color:var(--r-ink);background:transparent}
+.discovery-app .r-date-grid a{border-color:var(--r-line)}
+.discovery-app .r-brand{color:var(--r-ink)}
+.discovery-app .r-filterbar button,.discovery-app .r-filterbar input{font-size:14px}
+.discovery-app .r-empty{padding:36px 24px;border-style:solid}
+.discovery-app .r-empty p{font-size:15px}
+@media(max-width:800px){
+ .app-shell main{width:calc(100% - 28px)}
+ .app-shell .site-header{display:flex;flex-wrap:wrap;gap:16px;padding:14px}
+ .app-shell .site-header nav{display:flex;order:3;width:100%;gap:20px;overflow:auto;font-size:13px;padding-bottom:4px}
+ .app-shell .header-status{margin-left:auto}
+ .app-shell .hero-section{grid-template-columns:1fr;padding:24px 0;gap:20px}
+ .app-shell .hero-copy h1{font-size:28px}
+ .app-shell .hero-copy>p{font-size:15px}
+ .app-shell .snapshot-grid{grid-template-columns:1fr 1fr}
+ .app-shell .stat-card{padding:16px;min-height:120px}
+ .app-shell .stat-card strong{font-size:22px}
+ .app-shell .methodology-section{padding:22px}
+ .discovery-app .r-rail{background:#11110f;border-color:#30302a}
+ .discovery-app .r-rail nav a[aria-current=page]{background:none;color:#65e6bc}
+ .discovery-app .r-main{padding:24px 16px}
+ .discovery-app .r-top{padding-inline:16px}
+ .discovery-app .r-edition{display:none}
+}
+.app-shell .mover-table th{background:#1b1b17;color:#aaa99f;font-family:var(--font-geist-sans),sans-serif;letter-spacing:0;text-transform:none}
+.app-shell .ticker-avatar{background:#26261e;color:#c5d5e4;border:0;border-radius:4px}
+.app-shell .refresh-button{background:#17382e;color:#65e6bc;border:1px solid #38584c;border-radius:4px}
+.app-shell .mover-table tbody tr:hover{background:#1b2b35}
+.discovery-app .r-date-grid a>span:last-child,.discovery-app .r-method summary,.discovery-app .r-footer summary{color:#aaa99f;font-size:12px}
+.discovery-app .r-method{border-color:#30302a}
+.discovery-app .r-rail nav a:hover{background:#17382e}
+.app-shell details.methodology-section{display:block;padding:16px 20px;margin:24px 0}
+.app-shell details.methodology-section>summary{font-size:14px;cursor:pointer}
+.app-shell details.methodology-section[open]>.methodology-intro{margin-top:20px}

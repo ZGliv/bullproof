@@ -1,0 +1,1679 @@
+{
+  "version": 1,
+  "startedAt": "2026-10-29T02:26:48.541Z",
+  "decisions": [
+    {
+      "id": "2026-10-28:growth:v1",
+      "day": "2026-10-28",
+      "strategy": "growth",
+      "at": "2026-10-29T02:27:17.978Z",
+      "model": "qwen3:8b",
+      "version": "v1",
+      "summary": "KO has durable revenue growth and positive operating income. FLXS has positive operating income but low revenue growth. HUBB has strong revenue growth and positive operating income. PSN has low revenue growth and margin decline. AON has moderate revenue growth and positive operating income. JOE has negative revenue growth but high margin.",
+      "picks": [
+        {
+          "ticker": "KO",
+          "weight": 20,
+          "thesis": "KO shows durable revenue growth and positive operating income, indicating strong financial health.",
+          "countercase": "KO's revenue growth may include non-organic factors like acquisitions or currency effects.",
+          "invalidate": "Future filings may revise prior periods, affecting revenue growth and margin trends.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "KO"
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "weight": 20,
+          "thesis": "HUBB has strong revenue growth and positive operating income, showing durable expansion.",
+          "countercase": "HUBB's margin decline may indicate cost pressures or pricing challenges.",
+          "invalidate": "Future filings may revise prior periods, affecting revenue growth and margin trends.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "HUBB"
+          ]
+        },
+        {
+          "ticker": "AON",
+          "weight": 20,
+          "thesis": "AON has positive operating income and moderate revenue growth, showing stable performance.",
+          "countercase": "AON's margin decline may indicate cost pressures or pricing challenges.",
+          "invalidate": "Future filings may revise prior periods, affecting revenue growth and margin trends.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "AON"
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "weight": 20,
+          "thesis": "FLXS has positive operating income but low revenue growth, indicating potential for improvement.",
+          "countercase": "FLXS's revenue growth may include non-organic factors like acquisitions or currency effects.",
+          "invalidate": "Future filings may revise prior periods, affecting revenue growth and margin trends.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "FLXS"
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "weight": 20,
+          "thesis": "PSN has positive operating income but low revenue growth, indicating potential for improvement.",
+          "countercase": "PSN's margin decline may indicate cost pressures or pricing challenges.",
+          "invalidate": "Future filings may revise prior periods, affecting revenue growth and margin trends.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "PSN"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-28:quality:v1",
+      "day": "2026-10-28",
+      "strategy": "quality",
+      "at": "2026-10-29T02:27:35.466Z",
+      "model": "qwen3:8b",
+      "version": "v1",
+      "summary": "KO has strong operating income and margin growth, while JOE shows high margin improvement despite revenue decline. Other companies have mixed results. KO and JOE are top picks.",
+      "picks": [
+        {
+          "ticker": "KO",
+          "weight": 20,
+          "thesis": "KO shows strong operating income and margin growth, indicating resilience and efficiency.",
+          "countercase": "Revenue growth is moderate, and margin changes could be affected by external factors.",
+          "invalidate": "Future filings may revise margin figures; organic growth is not isolated.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "KO"
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "weight": 20,
+          "thesis": "JOE has a high margin and significant margin improvement, showing strong profitability.",
+          "countercase": "Revenue decline may indicate underlying issues or market challenges.",
+          "invalidate": "Future filings may revise revenue and margin figures; organic growth is not isolated.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "JOE"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-28:turnaround:v1",
+      "day": "2026-10-28",
+      "strategy": "turnaround",
+      "at": "2026-10-29T02:27:51.786Z",
+      "model": "qwen3:8b",
+      "version": "v1",
+      "summary": "KO shows strong revenue growth and margin improvement. FLXS has revenue growth but margin decline. HUBB has high revenue growth but margin decline. PSN has low revenue growth and margin decline. AON has moderate revenue growth and margin decline. JOE has negative revenue growth but margin improvement.",
+      "picks": [
+        {
+          "ticker": "KO",
+          "weight": 20,
+          "thesis": "KO shows strong revenue growth and margin improvement, indicating improving operating results.",
+          "countercase": "Revenue growth may include acquisitions or currency effects, not organic growth.",
+          "invalidate": "Future filings can revise prior periods; margin improvement needs confirmation.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "KO"
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "weight": 20,
+          "thesis": "JOE has margin improvement despite negative revenue growth, indicating potential recovery.",
+          "countercase": "Negative revenue growth may indicate underlying weakness.",
+          "invalidate": "Future filings can revise prior periods; revenue growth needs confirmation.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "JOE"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-28:rules:v1",
+      "day": "2026-10-28",
+      "strategy": "rules",
+      "at": "2026-10-29T02:27:51.788Z",
+      "model": "Deterministic baseline",
+      "version": "v1",
+      "summary": "Top positive revenue growth with positive operating income. 20% per name, remaining cash.",
+      "picks": [
+        {
+          "ticker": "HUBB",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "HUBB"
+          ]
+        },
+        {
+          "ticker": "KO",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "KO"
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "FLXS"
+          ]
+        },
+        {
+          "ticker": "AON",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "AON"
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "PSN"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-28:spy:v1",
+      "day": "2026-10-28",
+      "strategy": "spy",
+      "at": "2026-10-29T02:27:51.789Z",
+      "model": "Deterministic baseline",
+      "version": "v1",
+      "summary": "Passive SPY benchmark. Buy at first eligible post-decision quote and hold.",
+      "picks": [
+        {
+          "ticker": "SPY",
+          "weight": 100,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "SPY"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-28:growth:v2",
+      "day": "2026-10-28",
+      "strategy": "growth",
+      "at": "2026-10-29T02:30:38.436Z",
+      "model": "qwen3:8b",
+      "version": "v2",
+      "summary": "KO shows strong revenue growth (7.4%) and margin expansion (33.4%), suggesting durable revenue expansion. Weights: KO 20%",
+      "picks": [
+        {
+          "ticker": "KO",
+          "weight": 20,
+          "thesis": "KO's 7.4% revenue growth and 33.4% margin suggest durable expansion. Revisit if next margin falls below 32%.",
+          "countercase": "KO's margin growth may include accounting changes, not organic improvement.",
+          "invalidate": "Revisit if next quarterly margin falls below 32%.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "KO"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-28:quality:v2",
+      "day": "2026-10-28",
+      "strategy": "quality",
+      "at": "2026-10-29T02:31:09.275Z",
+      "model": "qwen3:8b",
+      "version": "v2",
+      "summary": "KO",
+      "picks": [
+        {
+          "ticker": "KO",
+          "weight": 20,
+          "thesis": "KO has a 33.37% operating margin, above the 30% threshold. Hypothesis: KO's margin will stay above 30%.",
+          "countercase": "If KO's margin drops below 30%, reconsider.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 30%.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "KO"
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "weight": 20,
+          "thesis": "HUBB has a 21.83% operating margin, above the 20% threshold. Hypothesis: HUBB's margin will stay above 20%.",
+          "countercase": "If HUBB's margin drops below 20%, reconsider.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 20%.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "HUBB"
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "weight": 20,
+          "thesis": "JOE has a 39.40% operating margin, above the 35% threshold. Hypothesis: JOE's margin will stay above 35%.",
+          "countercase": "If JOE's margin drops below 35%, reconsider.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 35%.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "JOE"
+          ]
+        },
+        {
+          "ticker": "AON",
+          "weight": 20,
+          "thesis": "AON has a 19.73% operating margin, above the 18% threshold. Hypothesis: AON's margin will stay above 18%.",
+          "countercase": "If AON's margin drops below 18%, reconsider.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 18%.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "AON"
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "weight": 20,
+          "thesis": "PSN has a 6.29% operating margin, above the 5% threshold. Hypothesis: PSN's margin will stay above 5%.",
+          "countercase": "If PSN's margin drops below 5%, reconsider.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 5%.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "PSN"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-28:turnaround:v2",
+      "day": "2026-10-28",
+      "strategy": "turnaround",
+      "at": "2026-10-29T02:31:48.395Z",
+      "model": "qwen3:8b",
+      "version": "v2",
+      "summary": "KO shows a 7.4% revenue growth and a 33.4% operating margin, with a 1.4% margin improvement. AON has a 19.7% margin and 2.6% revenue growth. HUBB has a 21.8% margin and 24.6% revenue growth. FLXS has a 6.0% margin and 3.2% revenue growth. PSN has a 6.3% margin and 1.8% revenue growth. JOE has a 39.4% margin but -3.0% revenue growth.",
+      "picks": [
+        {
+          "ticker": "KO",
+          "weight": 20,
+          "thesis": "KO shows a 7.4% revenue growth and a 33.4% operating margin, with a 1.4% margin improvement.",
+          "countercase": "KO's margin improvement may be due to one-time factors.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 30%.",
+          "horizon": "1–3 months",
+          "evidence": [
+            "KO"
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "weight": 20,
+          "thesis": "HUBB has a 21.8% margin and 24.6% revenue growth, showing strong performance.",
+          "countercase": "HUBB's revenue growth may include acquisitions or currency effects.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 20%.",
+          "horizon": "1–3 months",
+          "evidence": [
+            "HUBB"
+          ]
+        },
+        {
+          "ticker": "AON",
+          "weight": 20,
+          "thesis": "AON has a 19.7% margin and 2.6% revenue growth, showing stable performance.",
+          "countercase": "AON's revenue growth may be influenced by external factors.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 18%.",
+          "horizon": "1–3 months",
+          "evidence": [
+            "AON"
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "weight": 20,
+          "thesis": "FLXS has a 6.0% margin and 3.2% revenue growth, showing modest improvement.",
+          "countercase": "FLXS's margin decline may be due to one-time factors.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 5%.",
+          "horizon": "1–3 months",
+          "evidence": [
+            "FLXS"
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "weight": 20,
+          "thesis": "PSN has a 6.3% margin and 1.8% revenue growth, showing stable performance.",
+          "countercase": "PSN's revenue growth may be influenced by external factors.",
+          "invalidate": "Revisit if next quarterly operating margin falls below 5%.",
+          "horizon": "1–3 months",
+          "evidence": [
+            "PSN"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-28:rules:v2",
+      "day": "2026-10-28",
+      "strategy": "rules",
+      "at": "2026-10-29T02:31:48.398Z",
+      "model": "Deterministic baseline",
+      "version": "v2",
+      "summary": "Top positive revenue growth with positive operating income. 20% per name, remaining cash.",
+      "picks": [
+        {
+          "ticker": "HUBB",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "HUBB"
+          ]
+        },
+        {
+          "ticker": "KO",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "KO"
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "FLXS"
+          ]
+        },
+        {
+          "ticker": "AON",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "AON"
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "weight": 20,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "PSN"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2026-10-28:spy:v2",
+      "day": "2026-10-28",
+      "strategy": "spy",
+      "at": "2026-10-29T02:31:48.398Z",
+      "model": "Deterministic baseline",
+      "version": "v2",
+      "summary": "Passive SPY benchmark. Buy at first eligible post-decision quote and hold.",
+      "picks": [
+        {
+          "ticker": "SPY",
+          "weight": 100,
+          "thesis": "Baseline rule",
+          "countercase": "No valuation filter.",
+          "invalidate": "Baseline remains fixed for comparison.",
+          "horizon": "1–3 years",
+          "evidence": [
+            "SPY"
+          ]
+        }
+      ],
+      "evidence": [
+        {
+          "ticker": "KO",
+          "name": "COCA COLA CO",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/21344/000162828026067844/0001628280-26-067844-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-10-02",
+          "revenue": 13380000000,
+          "operatingIncome": 4465000000,
+          "margin": 33.37070254110613,
+          "revenueGrowth": 7.426736250501809,
+          "marginChange": 1.3996065957026715,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "FLXS",
+          "name": "FLEXSTEEL INDUSTRIES INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/37472/000119312526436394/0001193125-26-436394-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 113966000,
+          "operatingIncome": 6894000,
+          "margin": 6.049172560237263,
+          "revenueGrowth": 3.19361819647046,
+          "marginChange": -2.0883513217247245,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "HUBB",
+          "name": "HUBBELL INC",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/48898/000162828026067729/0001628280-26-067729-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1872500000,
+          "operatingIncome": 408700000,
+          "margin": 21.826435246995995,
+          "revenueGrowth": 24.63391906283281,
+          "marginChange": -0.1783570852723777,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "PSN",
+          "name": "PARSONS CORP",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/275880/000119312526435045/0001193125-26-435045-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 1650548000,
+          "operatingIncome": 103819000,
+          "margin": 6.289971573077548,
+          "revenueGrowth": 1.7758616011858797,
+          "marginChange": -0.36673464761765295,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "AON",
+          "name": "Aon plc",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/315293/000162828026067879/0001628280-26-067879-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 4101000000,
+          "operatingIncome": 809000000,
+          "margin": 19.72689587905389,
+          "revenueGrowth": 2.601951463597696,
+          "marginChange": -0.6884156045588199,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        },
+        {
+          "ticker": "JOE",
+          "name": "ST JOE Co",
+          "sourceUrl": "https://www.sec.gov/Archives/edgar/data/745308/000110465926119631/0001104659-26-119631-index.html",
+          "filed": "2026-10-28",
+          "period": "2026-09-30",
+          "revenue": 156185000,
+          "operatingIncome": 61544000,
+          "margin": 39.4045522937542,
+          "revenueGrowth": -3.0364548411929815,
+          "marginChange": 6.543045924090187,
+          "caveats": [
+            "Reported financials, not real-time prices. No recommendation or valuation is inferred.",
+            "Only standard US-GAAP USD tags and explicitly reported 75–105 day quarters are included. Missing quarters are not estimated; annual and cumulative cash-flow figures are omitted.",
+            "Later filings can revise prior periods. Each metric links to the filing used; figures may differ from the originally announced result.",
+            "Reported sales changes can include acquisitions, currency effects and accounting changes. These facts do not isolate organic growth."
+          ]
+        }
+      ]
+    }
+  ],
+  "fills": [],
+  "marks": [],
+  "attempts": [
+    {
+      "id": "2026-10-28:growth:v2:2026-10-29T03:00:02.760Z",
+      "at": "2026-10-29T03:00:02.760Z",
+      "decision": "2026-10-28:growth:v2",
+      "status": "blocked",
+      "reason": "US regular session is closed"
+    },
+    {
+      "id": "2026-10-28:quality:v2:2026-10-29T03:00:02.760Z",
+      "at": "2026-10-29T03:00:02.760Z",
+      "decision": "2026-10-28:quality:v2",
+      "status": "blocked",
+      "reason": "US regular session is closed"
+    },
+    {
+      "id": "2026-10-28:turnaround:v2:2026-10-29T03:00:02.760Z",
+      "at": "2026-10-29T03:00:02.760Z",
+      "decision": "2026-10-28:turnaround:v2",
+      "status": "blocked",
+      "reason": "US regular session is closed"
+    },
+    {
+      "id": "2026-10-28:rules:v2:2026-10-29T03:00:02.760Z",
+      "at": "2026-10-29T03:00:02.760Z",
+      "decision": "2026-10-28:rules:v2",
+      "status": "blocked",
+      "reason": "US regular session is closed"
+    },
+    {
+      "id": "2026-10-28:spy:v2:2026-10-29T03:00:02.760Z",
+      "at": "2026-10-29T03:00:02.760Z",
+      "decision": "2026-10-28:spy:v2",
+      "status": "blocked",
+      "reason": "US regular session is closed"
+    }
+  ],
+  "updatedAt": "2026-10-29T03:00:02.763Z",
+  "model": "qwen3:8b",
+  "connected": true,
+  "messages": [
+    "Market closed. Next open: 2026-10-29T09:30:00-04:00. No outside-session fills."
+  ],
+  "policies": [
+    {
+      "id": "growth",
+      "name": "Growth",
+      "mandate": "Find durable revenue expansion. Prefer positive operating income. Do not mistake one quarter for a durable trend.",
+      "color": "#20d99a"
+    },
+    {
+      "id": "quality",
+      "name": "Quality",
+      "mandate": "Prefer positive operating income, resilient margins and consistent earnings. Penalize deterioration. Cash is valid.",
+      "color": "#6aa9ff"
+    },
+    {
+      "id": "turnaround",
+      "name": "Turnaround",
+      "mandate": "Look for improving operating results after weakness. Require observable recovery; cheap valuation cannot be inferred from filings alone.",
+      "color": "#c899ff"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "growth",
+      "cash": 100000,
+      "positions": {}
+    },
+    {
+      "id": "quality",
+      "cash": 100000,
+      "positions": {}
+    },
+    {
+      "id": "turnaround",
+      "cash": 100000,
+      "positions": {}
+    },
+    {
+      "id": "rules",
+      "cash": 100000,
+      "positions": {}
+    },
+    {
+      "id": "spy",
+      "cash": 100000,
+      "positions": {}
+    }
+  ],
+  "execution": "Internal simulation using Alpaca IEX quotes. No broker orders. Whole shares; bid/ask plus 5 bps adverse slippage; zero commissions. 20% target cap for active strategies, 100% SPY baseline. Price returns only: dividends and corporate actions are not automatically reconciled. Scheduled on this Mac during market hours; website shows the last successful publication.",
+  "automation": {
+    "schedule": "Weekdays, every 30 minutes from 9:05 a.m. to 4:35 p.m. Eastern; execution only while Alpaca reports the regular session open",
+    "model": "qwen3:8b",
+    "runner": "Codex heartbeat on this Mac",
+    "requires": "Mac awake, online, Codex available, Ollama running",
+    "inference": "Once per trading day; maximum 3 attempts per day",
+    "publication": "At most one production update per 29 minutes and 15 per day; fixed approved source bundle",
+    "day": "2026-10-28",
+    "publishCount": 1,
+    "lastPublishAt": 1793243843288,
+    "researchAttempts": 0,
+    "enabled": true,
+    "lastCheckAt": "2026-10-29T03:18:37.112Z",
+    "nextOpen": "2026-10-29T09:30:00-04:00",
+    "marketOpen": false,
+    "lastOutcome": "Market closed; no inference or execution attempted.",
+    "lastPublishedAt": "2026-10-29T03:17:50.812Z"
+  }
+}

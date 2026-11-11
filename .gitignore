@@ -1,0 +1,15 @@
+node_modules
+.next
+.vercel
+.env*
+*.tsbuildinfo
+.paper/
+.wrangler/
+.dev.vars*
+cloud/.dev.vars*
+
+output/
+.playwright-cli/
+cloud/output/
+*.swp
+.DS_Store
