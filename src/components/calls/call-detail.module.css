@@ -43,6 +43,10 @@
   font-variant-numeric: tabular-nums;
 }
 
+.metaArrow {
+  color: var(--bp-muted);
+}
+
 .legs,
 .result {
   display: flex;
@@ -206,10 +210,17 @@
 }
 
 .source {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   align-self: flex-start;
+  min-height: 28px;
   color: var(--bp-muted);
   font-family: var(--bp-mono);
   font-size: 12px;
+}
+
+.sourceText {
   text-decoration: underline;
   text-decoration-color: var(--bp-line);
   text-underline-offset: 3px;
@@ -217,6 +228,9 @@
 
 .source:hover {
   color: var(--bp-ink);
+}
+
+.source:hover .sourceText {
   text-decoration-color: var(--bp-muted);
 }
 

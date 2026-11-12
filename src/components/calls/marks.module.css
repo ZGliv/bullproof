@@ -32,8 +32,21 @@
   color: var(--bp-amber);
 }
 
-.none {
-  border-color: var(--bp-line);
+/* Not graded yet: a faint dot, so the column keeps its place without reading as a checkbox. */
+.pending::after {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--bp-line);
+}
+
+/* A leg that does not exist (no line): a short muted dash, no box. */
+.none::after {
+  content: "";
+  width: 6px;
+  height: 1px;
+  background: var(--bp-muted);
 }
 
 .direction,
@@ -114,6 +127,13 @@
 .axis {
   stroke: var(--bp-line);
   stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.lineTick {
+  stroke: var(--bp-muted);
+  stroke-width: 1;
+  stroke-dasharray: 1 2;
   shape-rendering: crispEdges;
 }
 

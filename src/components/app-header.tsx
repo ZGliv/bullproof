@@ -3,12 +3,48 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type {ReactNode} from 'react';
 
-const NAV = [
-  {id: 'slate', label: 'Slate', href: '/'},
-  {id: 'record', label: 'Record', href: '/record'},
-  {id: 'discover', label: 'Research', href: '/research'},
-];
+type Active = 'discover' | 'watchlist' | 'markets' | 'portfolios';
 
-export function AppHeader({active,children,onDiscover}:{active:'discover'|'watchlist'|'markets'|'portfolios';children?:ReactNode;onDiscover?:()=>void}){
- return <header className="ah-header"><Link className="ah-brand" href="/"><Image src="/brand/bullproof.svg?v=20261029-bull" width={32} height={32} alt=""/>Bullproof</Link><nav aria-label="Main navigation">{NAV.map(n=><Link key={n.id} href={n.href} aria-current={active===n.id?'page':undefined} onClick={n.id==='discover'&&onDiscover?e=>{e.preventDefault();onDiscover();}:undefined}>{n.label}</Link>)}</nav><div className="ah-tools"><button onClick={()=>window.dispatchEvent(new Event("bullproof-open-sync"))}>Sync</button>{children}</div></header>;
+export function AppHeader({
+  active,
+  children,
+  onDiscover,
+}: {
+  active: Active;
+  children?: ReactNode;
+  onDiscover?: () => void;
+}) {
+  return (
+    <header className="ah-header">
+      {/* Slate and Record run without the legacy stylesheets, so leaving /research is a full page load. */}
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- see above */}
+      <a className="ah-brand" href="/">
+        <Image src="/brand/bullproof.svg?v=20261029-bull" width={32} height={32} alt="" />
+        Bullproof
+      </a>
+      <nav aria-label="Main navigation">
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- full page load, as above */}
+        <a href="/">Slate</a>
+        <a href="/record">Record</a>
+        <Link
+          href="/research"
+          aria-current={active === 'discover' ? 'page' : undefined}
+          onClick={
+            onDiscover
+              ? (event) => {
+                  event.preventDefault();
+                  onDiscover();
+                }
+              : undefined
+          }
+        >
+          Research
+        </Link>
+      </nav>
+      <div className="ah-tools">
+        <button onClick={() => window.dispatchEvent(new Event('bullproof-open-sync'))}>Sync</button>
+        {children}
+      </div>
+    </header>
+  );
 }

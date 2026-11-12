@@ -19,6 +19,7 @@
 .groupHead {
   display: flex;
   align-items: baseline;
+  justify-content: space-between;
   gap: 8px;
   margin: 0;
   padding: 12px 8px 4px;
@@ -28,6 +29,13 @@
   font-weight: 500;
   line-height: 16px;
   letter-spacing: 0;
+}
+
+.groupLock {
+  color: var(--bp-muted);
+  font-family: var(--bp-mono);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Desktop: one grid row per call. The id/meta/call/outcome wrappers use display: contents so
@@ -43,18 +51,28 @@
   font-size: 13px;
 }
 
-.slate {
-  /* The status column spans the same 140px as move + two marks, so both tables share one grid. */
-  grid-template-columns: 56px minmax(0, 1fr) 36px 64px 64px 69px 72px 48px 39px 140px;
-}
-
-.results {
-  grid-template-columns: 56px minmax(0, 1fr) 36px 64px 64px 69px 72px 48px 39px 76px 20px 20px;
+.row {
+  /* Slate and results share one grid so their columns line up down the page. */
+  grid-template-columns: 56px minmax(0, 1fr) 36px 64px 72px 56px 69px 72px 48px 39px 76px 20px 20px;
 }
 
 a.row {
   position: relative;
   transition: background-color 80ms linear;
+}
+
+/* Out of flow, so it takes no grid cell. */
+.pendingEdge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background: transparent;
+}
+
+.pendingOn {
+  background: var(--bp-accent);
 }
 
 a.row:hover {
@@ -103,7 +121,6 @@ a.row.row:focus-visible {
 
 .timing,
 .num,
-.status,
 .move {
   font-family: var(--bp-mono);
   font-variant-numeric: tabular-nums;
@@ -123,6 +140,7 @@ a.row.row:focus-visible {
 }
 
 .cap,
+.close,
 .line {
   color: var(--bp-ink);
 }
@@ -130,18 +148,6 @@ a.row.row:focus-visible {
 .strip {
   display: flex;
   justify-content: flex-start;
-}
-
-.status {
-  color: var(--bp-muted);
-  font-size: 12px;
-  text-align: right;
-  white-space: nowrap;
-}
-
-.statusLabel {
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
 .move {
@@ -170,8 +176,7 @@ a.row.row:focus-visible {
     display: none;
   }
 
-  .row.slate,
-  .row.results {
+  .row {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       "id call"
@@ -223,8 +228,16 @@ a.row.row:focus-visible {
     min-width: 6.5ch;
   }
 
+  .close {
+    display: none;
+  }
+
   .move {
     margin-right: 4px;
+  }
+
+  .move:empty {
+    display: none;
   }
 }
 

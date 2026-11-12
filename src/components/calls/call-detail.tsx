@@ -17,6 +17,7 @@ import { ReactionChart } from "./reaction-chart";
 import d from "./call-detail.module.css";
 
 export function CallDetail({ call }: { call: EarningsCall }) {
+  const grade = call.status === "graded" ? call.grade : null;
   return (
     <article className={d.article}>
       <header className={d.head}>
@@ -25,9 +26,14 @@ export function CallDetail({ call }: { call: EarningsCall }) {
           <span className={d.name}>{call.name}</span>
         </h1>
         <p className={d.meta}>
-          <time dateTime={call.session}>{sessionLabel(call.session)}</time>
-          <span>{timingLabel(call.timing)}</span>
-          {call.marketCap === null ? null : <span title="Approximate market cap">{marketCap(call.marketCap)}</span>}
+          <span>
+            <time dateTime={call.reportDate}>{sessionLabel(call.reportDate)}</time> {timingLabel(call.timing)}
+            <span className={d.metaArrow} aria-hidden="true">
+              {" → "}
+            </span>
+            <time dateTime={call.session}>{sessionTick(call.session)}</time> close
+          </span>
+          {call.marketCap === null ? null : <span>{marketCap(call.marketCap)}</span>}
           <span>
             Locked{" "}
             <time dateTime={call.publishedAt}>
@@ -39,7 +45,7 @@ export function CallDetail({ call }: { call: EarningsCall }) {
       </header>
 
       <Legs call={call} />
-      {call.status === "graded" && call.grade ? <Result grade={call.grade} /> : null}
+      {grade ? <Result grade={grade} /> : null}
       {call.status === "void" && call.voidReason ? (
         <p className={d.void}>
           <span className={d.voidMark}>Void</span>
@@ -52,7 +58,11 @@ export function CallDetail({ call }: { call: EarningsCall }) {
           Line <span className={d.sectionValue}>{lineLabel(call.line.value)}</span>
           <span className={d.sectionNote}>{call.line.reactions.length} reactions</span>
         </h2>
-        <ReactionChart reactions={call.line.reactions} line={call.line.value} />
+        <ReactionChart
+          reactions={call.line.reactions}
+          line={call.line.value}
+          result={grade ? { session: grade.resultDate, movePct: grade.movePct } : null}
+        />
       </section>
 
       <section className={d.evidence} aria-label="Evidence">
@@ -152,7 +162,12 @@ function Evidence({ label, point }: { label: string; point: EvidencePoint }) {
         <p>{point.quote}</p>
       </blockquote>
       <a className={d.source} href={point.url} target="_blank" rel="noreferrer">
-        {point.form} · filed {filedDate(point.filedAt)}
+        <span className={d.sourceText}>
+          {point.form} · filed {filedDate(point.filedAt)}
+        </span>
+        <span aria-hidden="true">
+          ↗
+        </span>
       </a>
     </div>
   );

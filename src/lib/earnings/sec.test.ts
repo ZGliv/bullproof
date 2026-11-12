@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { filingIndexUrl, findReleases, type Filing } from "./sec";
+import { describe, expect, it, vi } from "vitest";
+import { filingIndexUrl, findReleases, getPacket, packetRelease, type Filing } from "./sec";
 
 // Real rows from SEC submissions JSON: [accession, form, items, filingDate, reportDate, acceptanceDateTime].
 type Row = [string, string, string, string, string, string];
@@ -92,6 +92,10 @@ describe("findReleases", () => {
     expect(summary(AAPL, "320193")[0]).toEqual(["0000320193-26-000024", "2026-09-26"]);
   });
 
+  it("takes the earliest of two same-day 2.02 8-Ks when no periodic report has matched them yet", () => {
+    expect(summary(PENG.slice(1), "1616533")[0]).toEqual(["0001616533-26-000046", null]);
+  });
+
   it("links each release to its filing index and returns true UTC acceptance times", () => {
     const [newest] = findReleases(filings(AAPL), "0000320193");
     expect(newest.url).toBe(
@@ -103,5 +107,75 @@ describe("findReleases", () => {
 
   it("returns nothing for issuers without 2.02 8-Ks", () => {
     expect(findReleases(filings(AAPL.filter((row) => row[1] !== "8-K")), "320193")).toEqual([]);
+  });
+});
+
+// URBN files its results 8-Ks under Items 8.01/9.01 since 2017; its last Item 2.02 8-K is from 2016.
+const URBN: Row[] = [
+  ["0001193125-26-386468", "10-Q", "", "2026-09-09", "2026-07-31", "2026-09-09T20:17:16.000Z"],
+  ["0001193125-26-369924", "8-K", "8.01,9.01", "2026-08-27", "2026-08-26", "2026-08-27T14:38:50.000Z"],
+  ["0001193125-26-263929", "10-Q", "", "2026-06-09", "2026-04-30", "2026-06-09T20:50:20.000Z"],
+  ["0001193125-16-790744", "10-Q", "", "2016-12-12", "2016-10-31", "2016-12-12T21:14:59.000Z"],
+  ["0001193125-16-776037", "8-K", "2.02,9.01", "2016-11-23", "2016-11-22", "2016-11-23T16:09:02.000Z"],
+  ["0001193125-16-704216", "10-Q", "", "2016-09-08", "2016-07-31", "2016-09-08T12:18:52.000Z"],
+];
+
+// ISRG pre-announced Q4 2025 on 2026-01-14 (Item 2.02) and released full results on 2026-01-22.
+const ISRG: Row[] = [
+  ["0001035267-26-000003", "8-K", "2.02,9.01", "2026-01-14", "2026-01-14", "2026-01-14T13:58:49.000Z"],
+  ["0001035267-25-000211", "8-K", "5.02", "2025-12-18", "2025-12-16", "2025-12-18T22:02:23.000Z"],
+  ["0001035267-25-000209", "10-Q", "", "2025-10-22", "2025-09-30", "2025-10-22T21:18:20.000Z"],
+  ["0001035267-25-000206", "8-K", "2.02,9.01", "2025-10-21", "2025-10-21", "2025-10-21T20:03:44.000Z"],
+  ["0001035267-25-000192", "10-Q", "", "2025-07-23", "2025-06-30", "2025-07-23T20:53:33.000Z"],
+  ["0001035267-25-000183", "8-K", "2.02,9.01", "2025-07-22", "2025-07-22", "2025-07-22T20:03:52.000Z"],
+];
+
+describe("packetRelease", () => {
+  const periodic = (rows: Row[]) => filings(rows).find((f) => f.form !== "8-K") ?? null;
+  const verdict = (rows: Row[], cik: string, asOf: string, skip = 0) => {
+    const result = packetRelease("T", findReleases(filings(rows), cik).slice(skip), periodic(rows), asOf);
+    return "ok" in result ? result.reason : result.accession;
+  };
+
+  it("serves the release that covers the newest periodic report", () => {
+    expect(verdict(LSTR, "853816", "2025-09-20T01:30:00.000Z")).toBe("0001193125-25-168015");
+  });
+
+  it("refuses when the company reported within the last 45 days", () => {
+    expect(verdict(LSTR, "853816", "2025-08-20T01:30:00.000Z")).toBe("already-reported");
+    expect(verdict(AAPL.slice(1), "320193", "2026-11-12T01:30:00.000Z")).toBe("already-reported");
+  });
+
+  it("refuses a years-old release from an issuer that moved results off Item 2.02", () => {
+    expect(verdict(URBN, "912615", "2026-11-12T01:30:00.000Z")).toBe("stale-release");
+  });
+
+  it("refuses a matching release once it is older than a quarter allows", () => {
+    expect(verdict(LSTR, "853816", "2025-12-20T01:30:00.000Z")).toBe("stale-release");
+  });
+
+  it("serves the previous quarter once a preliminary pre-announcement is set aside", () => {
+    const asOf = "2026-01-22T01:30:00.000Z";
+    expect(verdict(ISRG, "1035267", asOf)).toBe("already-reported");
+    expect(verdict(ISRG, "1035267", asOf, 1)).toBe("0001035267-25-000206");
+  });
+
+  it("refuses issuers without 2.02 8-Ks", () => {
+    expect(verdict(AAPL.filter((row) => row[1] !== "8-K"), "320193", "2026-12-20T01:30:00.000Z")).toBe("not-8k-filer");
+  });
+});
+
+describe("getPacket", () => {
+  it("throws on an SEC throttle instead of returning a refusal the worker would record as a skip", async () => {
+    const fetch = vi.fn(async () => new Response("Request Rate Threshold Exceeded", { status: 403 }));
+    vi.stubGlobal("fetch", fetch);
+    try {
+      await expect(getPacket("CSCO", new Date().toISOString())).rejects.toThrow(/HTTP 403/);
+      // Cooling down: the next packet fails without another request to SEC.
+      await expect(getPacket("INTU", new Date().toISOString())).rejects.toThrow(/rate limiting/);
+      expect(fetch).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 });

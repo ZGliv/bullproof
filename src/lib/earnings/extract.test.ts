@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   earningsReleaseScore,
   htmlToText,
+  isPreliminaryRelease,
   isNumericLine,
   mdnaText,
   parseFilingIndex,
@@ -129,7 +130,7 @@ describe("pressReleaseText", () => {
     expect(text).not.toMatch(/Exhibit 99|Private Securities|Macintosh|Press Contact|Leahy/);
   });
 
-  it("drops cover noise, footnotes, outlook-table rows and everything from the call details on", () => {
+  it("drops cover noise, footnotes, unlabelled figure residue and everything from the call details on", () => {
     const { text } = pressReleaseText(PENG_RELEASE_TEXT);
     expect(text.split("\n").slice(0, 2)).toEqual(["Penguin Solutions Announces", "Fourth-Quarter and Full-Year Fiscal 2026 Results"]);
     expect(text).toContain("Record Non-GAAP operating income of $90 million");
@@ -286,5 +287,196 @@ describe("filing index", () => {
     expect(pressReleaseExhibit([doc("EX-99"), doc("EX-99.01")])?.type).toBe("EX-99.01");
     expect(pressReleaseExhibit([doc("EX-99.2"), doc("EX-99"), doc("EX-99.1")])?.type).toBe("EX-99.1");
     expect(pressReleaseExhibit([doc("EX-99.2"), doc("EX-10.1")])).toBeNull();
+  });
+});
+
+// Real lines from 2026 filings: CSCO 10-K MD&A, WFC 10-K, and the HPQ, ROST, CSCO, TJX press releases.
+const CSCO_MDNA = [
+  "Item 7. Management’s Discussion and Analysis of Financial Condition and Results of Operations",
+  "Forward-Looking Statements",
+  "This Annual Report on Form 10-K, including this Management’s Discussion and Analysis of Financial Condition and Results of Operations, contains forward-looking statements regarding future events and our future results that are subject to the safe harbors created under the Securities Act of 1933, as amended (the “Securities Act”), and the Securities Exchange Act of 1934, as amended (the “Exchange Act”). All statements other than statements of historical facts are statements that could be deemed forward-looking statements. These statements are based on current expectations, estimates, forecasts, and projections about the industries in which we operate and the beliefs and assumptions of our management. Words such as “expects,” “anticipates,” “targets,” “goals,” “projects,” “intends,” “plans,” “believes,” “momentum,” “seeks,” “estimates,” “continues,” “endeavors,” “strives,” “may,” variations of such words, and similar expressions are intended to identify such forward-looking statements. In addition, any statements that refer to projections of our future financial performance, our anticipated growth and trends in our businesses, and other characterizations of future events or circumstances are forward-looking statements. Readers are cautioned that these forward-looking statements are only predictions and are subject to risks, uncertainties, and assumptions that are difficult to predict, including those under “Part I, Item 1A. Risk Factors,” and elsewhere herein. Therefore, actual results may differ materially and adversely from those expressed in any forward-looking statements. We undertake no obligation to revise or update any forward-looking statements for any reason.",
+  "OVERVIEW",
+  "Cisco designs and sells a broad range of technologies including hardware, software, and artificial intelligence (AI) powered digital infrastructure to power, help secure, and draw insights from the Internet. We are incorporating AI into our product portfolios across networking, security, collaboration and observability, as well as integrating our products more tightly together into a platform. We are simplifying how our technology is delivered, managed and optimized and helping customers maximize the business value of their technology investments.",
+  "A summary of our results is as follows (in millions, except percentages and per-share amounts):",
+  "MANAGEMENT’S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS (Continued)",
+  "RESULTS OF OPERATIONS",
+  "A discussion regarding our financial condition and results of operations for fiscal 2026 compared to fiscal 2025 is presented below. A discussion regarding our financial condition and results of operations for fiscal 2025 compared to fiscal 2024 can be found under Item 7 in our Annual Report on Form 10-K for the fiscal year ended July 26, 2025, filed with the SEC on September 3, 2025.",
+  "Revenue",
+  "The following table presents the breakdown of revenue between product and services (in millions, except percentages):",
+  "Amounts may not sum and percentages may not recalculate due to rounding.",
+  "We manage our business primarily on a geographic basis, organized into three geographic segments. Our revenue, which includes product and services for each segment, is summarized in the following table (in millions, except percentages):",
+  "Amounts may not sum and percentages may not recalculate due to rounding.",
+  "Total revenue in fiscal 2026 increased by 12% compared with fiscal 2025. Product revenue increased by 16% and services revenue was flat. Our total revenue reflected growth across each of our geographic segments.",
+  "In addition to the impact of macroeconomic factors, including the IT spending environment and the level of spending by government entities, revenue by segment in a particular period may be significantly impacted by the timing of revenue recognition for complex transactions with multiple performance obligations. In addition, certain customers tend to make large and sporadic purchases, and the revenue related to these transactions may also be affected by the timing of revenue recognition, which in turn would impact the revenue of the relevant segment.",
+  "CISCO SYSTEMS, INC.",
+  "MANAGEMENT’S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS (Continued)",
+  "Product Revenue by Segment",
+  "The following table presents the breakdown of product revenue by segment (in millions, except percentages):",
+  "Amounts may not sum and percentages may not recalculate due to rounding.",
+  "Americas",
+  "Product revenue in the Americas segment increased by 17%, with growth across each of our customer markets, led by the Service Provider and Cloud customer market which was largely driven by revenue from our AI Infrastructure solutions. From a country perspective, product revenue increased in the United States, Canada and Mexico by 18%, 8% and 25%, respectively, partially offset by a decline in Brazil of 10%.",
+  "EMEA",
+  "Product revenue in the EMEA segment increased by 15%, driven by growth across each of our customer markets. From a country perspective, product revenue increased in the United Kingdom, Germany, and France by 31%, 16% and 11%, respectively.",
+  "CISCO SYSTEMS, INC.",
+  "MANAGEMENT’S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS (Continued)",
+  "LIQUIDITY AND CAPITAL RESOURCES",
+  "The following sections discuss the effects of changes in our balance sheet, our capital allocation strategy including stock repurchase program and dividends, our contractual obligations, and certain other commitments and activities on our liquidity and capital resources.",
+].join("\n");
+const WFC_MDNA = [
+  "ITEM 7. MANAGEMENT’S DISCUSSION AND ANALYSIS OF FINANCIAL CONDITION AND RESULTS OF OPERATIONS",
+  "Information in response to this Item 7 can be found in the 2025 Annual Report to Shareholders under “Financial Review.” That information is incorporated into this item by reference.",
+].join("\n");
+const HPQ_TAIL = [
+  "For fiscal 2026, HP is also raising its estimate of free cash flow to be in the range of $3.0 to $3.2 billion.",
+  "More information on HP's earnings, including additional financial analysis and an earnings overview presentation, is available on HP's Investor Relations website at https://investor.hp.com.",
+  "HP's FY26 Q3 earnings conference call is accessible via audio webcast at www.hp.com/investor/2026Q3Webcast.",
+  "About HP Inc.",
+  "HP Inc. (NYSE: HPQ) is a global technology leader redefining the Future of Work. Operating in more than 180 countries, HP delivers innovative and AI-powered devices, software, services and subscriptions that drive business growth and professional fulfillment. For more information, please visit https://www.hp.com.",
+  "",
+].join("\n");
+const ROST_TAIL = [
+  "Mr. Conroy commented, “Looking ahead, we exited the second quarter with building momentum and are excited for the plans we have in place entering the Fall season. Despite facing significantly more challenging year-over-year comparisons in the back half, we are raising our outlook for both the third and fourth quarters. Comparable store sales are now expected to increase 6% to 7% in the third quarter and 4% to 5% in the fourth quarter. If the second half of 2026 performs in line with these sales projections, our earnings per share ranges for the third and fourth quarters are projected to be $1.75 to $1.83 and $2.17 to $2.26, respectively.”",
+  "Mr. Conroy continued, “Based on our strong first half results and our updated second half guidance, we are increasing our 2026 fiscal year earnings per share projections to be in the range of $8.61 to $8.77, which again includes an approximate $0.60 earnings per share benefit from IEEPA tariff refunds recognized in the second quarter. From a store growth perspective, we continue to be encouraged by the success of our expansion strategy across both new and existing markets. As a result, we are increasing our 2026 new store opening plan to 115 locations, consisting of approximately 90 Ross Dress for Less and 25 dd’s DISCOUNTS stores.”",
+  "Mr. Conroy concluded, “The year is off to a very strong start with the entire organization executing at a high level. As our efforts to improve topline growth continue, we remain focused on disciplined, consistent execution across the business. Moving forward, we believe we are well positioned to capture additional market share and drive profitable growth over the long term.”",
+  "The Company will host a conference call on Thursday, August 20, 2026 at 4:15 p.m. Eastern time to provide additional details concerning its second quarter results and management’s outlook for the second half and fiscal year 2026. A real-time audio webcast of the conference call will be available in the Investors section of the Company’s website, located at www.rossstores.com. An audio playback will be available at 201-612-7415, PIN #13762049 until 8:00 p.m. Eastern time on August 27, 2026, as well as on the Company’s website.",
+  "Forward-Looking Statements: This press release and the related conference call remarks contain forward-looking statements regarding, without limitation, projected sales, costs and earnings, planned new store growth, capital expenditures, liquidity and other matters. These forward-looking statements reflect our then-current beliefs, plans, and estimates with respect to future events and our projected financial performance, operations, and competitive position, and they are subject to risks and uncertainties which could cause our actual results to differ materially from management’s current expectations. The words “plan,” “expect,” “target,” “anticipate,” “estimate,” “believe,” “forecast,” “projected,” “guidance,” “outlook,” “looking ahead,” and similar expressions identify forward-looking statements. Risk factors for Ross Dress for Less® (“Ross”) and dd’s DISCOUNTS® include without limitation, risk from adverse changes in the macroeconomic environment, government regulations and policies, geopolitical conditions and conflicts, and financial and credit markets; increased costs of fuel and other consumer necessities, continuing inflation and other external economic trends and events may have significant negative effects on consumer confidence, shopping behavior, and spending, and also on our costs; tariff increases (or threats of increases) and other changes and uncertainty in U.S. trade or tax policy regarding apparel, home-related merchandise, shoes, and other goods we sell that are produced in other countries; competitive pressures and the pace of change in the retailing industry; unexpected changes in the level of consumer spending or preferences; adverse or unseasonable weather may affect shopping patterns and consumer demand for seasonal apparel and other merchandise, and may result in temporary store closures and disruptions in deliveries of merchandise to our stores; our dependence on the market availability, quantity, and quality of attractive brand name merchandise at desirable discounts, and on the ability of our buyers to source and purchase merchandise to enable us to offer customers a wide assortment of merchandise at competitive prices; our need to expand in existing markets and enter new geographic markets in order to achieve growth; our need to obtain acceptable new store sites with favorable consumer demographics in order to achieve growth; our need to continually attract, train, and retain associates with the retail talent necessary to execute our off-price retail strategies, as well as labor shortages, increased turnover, or increased labor costs; our need to effectively manage our inventories, markdowns, and inventory shortage in order to achieve our planned gross margins; information or data security breaches, including cyberattacks on our transaction processing and computer information systems, including malware intrusion, data exfiltration, identity theft, and other types of cybersecurity threats, could disrupt our operations, result in theft or unauthorized disclosure of our confidential and valuable business information or credit card and other customer information, and could disrupt our operations, damage our reputation, increase our costs, and create significant legal exposure; disruptions in our supply chain or in our information systems could impact our ability to process sales and to deliver product to our stores in a timely and cost-effective manner; risks associated with importing and selling merchandise produced in other countries; damage to our corporate reputation or brands; a natural or man-made disaster in a region where we have a concentration of stores, offices, or a distribution center; consumer problems or legal issues involving the quality, safety, or authenticity of products we sell could harm our reputation, result in lost sales, and/or increase our costs; an adverse outcome in various legal, regulatory, or tax matters, could damage our reputation or brand and increase our costs. Other risk factors are set forth in our SEC filings including the Form 10-K for fiscal 2025 and fiscal 2026 Form 8-Ks and 10-Q on file with the SEC. The factors underlying our forecasts and plans are dynamic and subject to change. As a result, any forecasts or forward-looking statements speak only as of",
+  "About Ross Stores, Inc.",
+  "Ross Stores, Inc. is an S&P 500, Fortune 500, and Nasdaq 100 (ROST) company headquartered in Dublin, California, with fiscal 2025 revenues of $22.8 billion. Currently, the Company operates Ross Dress for Less® (\"Ross\"), the largest off-price apparel and home fashion chain in the United States with 1,952 locations in 44 states, the District of Columbia, Guam, and Puerto Rico. Ross offers first-quality, in-season, brand name and designer apparel, accessories, footwear, and home fashions for the entire family at savings of 20% to 60% off department and specialty store regular prices every day. The Company also operates 376 dd's DISCOUNTS® stores in 23 states that feature a more moderately-priced assortment of first-quality, in-season apparel, accessories, footwear, and home fashions for the entire family at savings of 20% to 70% off moderate department and discount store regular prices every day. Additional information is available at www.rossstores.com.",
+  "Forward-Looking Statements: This press release and the related conference call remarks contain forward-looking statements regarding, without limitation, projected sales, costs and earnings, planned new store growth, capital expenditures, liquidity and other matters. These forward-looking statements reflect our then-current beliefs, plans, and estimates with respect to future events and our projected financial performance, operations, and competitive position, and they are subject to risks and uncertainties which could cause our actual results to differ materially from management’s current expectations. The words “plan,” “expect,” “target,” “anticipate,” “estimate,” “believe,” “forecast,” “projected,” “guidance,” “outlook,” “looking ahead,” and similar expressions identify forward-looking statements. Risk factors for Ross Dress for Less® (“Ross”) and dd’s DISCOUNTS® include without limitation, risk from adverse changes in the macroeconomic environment, government regulations and policies, geopolitical conditions and conflicts, and financial and credit markets; increased costs of fuel and other consumer necessities, continuing inflation and other external economic trends and events may have significant negative effects on consumer confidence, shopping behavior, and spending, and also on our costs; tariff increases (or threats of increases) and other changes and uncertainty in U.S. trade or tax policy regarding apparel, home-related merchandise, shoes, and other goods we sell that are produced in other countries; competitive pressures and the pace of change in the retailing industry; unexpected changes in the level of consumer spending or preferences; adverse or unseasonable weather may affect shopping patterns and consumer demand for seasonal apparel and other merchandise, and may result in temporary store closures and disruptions in deliveries of merchandise to",
+  "",
+].join("\n");
+const CSCO_TOP = [
+  "Robyn Blum Sami Badri",
+  "Cisco Cisco",
+  "CISCO REPORTS FOURTH QUARTER AND FISCAL YEAR 2026 EARNINGS",
+  "News Summary:",
+  "•Record top and bottom-line performance with double-digit growth in Q4 and FY 2026, exceeding the high end of guidance ranges",
+  "•Exceptional FY 2026 operating margin results, demonstrating strong execution and operating efficiency",
+  "•Broad-based, record high demand for Cisco technology with a networking supercycle underway",
+].join("\n");
+const TJX_TOP = [
+  "Debra McConnell FOR IMMEDIATE RELEASE",
+  "Global Communications Wednesday, August 19, 2026",
+  "TJX REPORTS Q2 FY27 RESULTS; ABOVE-PLAN COMP SALES GROWTH OF 4%; PRETAX PROFIT MARGIN AND DILUTED EPS BOTH WELL ABOVE PLAN; INCREASES FULL YEAR FY27 PRETAX PROFIT MARGIN AND EPS GUIDANCE",
+  "Adjusted results throughout this press release exclude a benefit from International Emergency Economic Powers Act (“IEEPA”) tariff refunds that are partially offset by related incremental compensation expense accruals (see below)",
+].join("\n");
+// ISRG's 2026-01-14 Exhibit 99.1: headline and first paragraph.
+const ISRG_PRELIMINARY = "<div style=\"margin-top:9pt;text-align:center\"><font style=\"color:#000000;font-family:'Times New Roman',serif;font-size:10pt;font-weight:700;line-height:120%\">INTUITIVE&#160;ANNOUNCES&#160;PRELIMINARY</font></div><div style=\"margin-bottom:6pt;text-align:center\"><font style=\"color:#000000;font-family:'Times New Roman',serif;font-size:10pt;font-weight:700;line-height:120%\">FOURTH QUARTER&#160;AND FULL YEAR 2025&#160;RESULTS</font></div><div style=\"text-align:justify\"><font style=\"color:#000000;font-family:'Times New Roman',serif;font-size:10pt;font-weight:400;line-height:120%\">SUNNYVALE, CALIF. January&#160;14, 2026 &#8211; Intuitive (the &#8220;Company&#8221;) (Nasdaq&#58; ISRG), a global technology leader in minimally invasive care and the pioneer of robotic-assisted surgery, today announced certain unaudited preliminary fourth quarter and full year 2025 financial results ahead of its presentation at the 44</font><font style=\"color:#000000;font-family:'Times New Roman',serif;font-size:6.5pt;font-weight:400;line-height:120%;position:relative;top:-3.5pt;vertical-align:baseline\">th</font><font style=\"color:#000000;font-family:'Times New Roman',serif;font-size:10pt;font-weight:400;line-height:120%\"> Annual J.P. Morgan Healthcare Conference on January 14, 2026.</font></div>";
+
+describe("mdnaText on real 10-Ks", () => {
+  it("reads past the running page header to Liquidity and Capital Resources", () => {
+    const text = mdnaText(CSCO_MDNA, "10-K");
+    expect(text).toContain("Product revenue in the EMEA segment increased by 15%");
+    expect(text).not.toMatch(/\(Continued\)|following sections discuss the effects/);
+  });
+
+  it("returns empty text when Item 7 only points to the annual report", () => {
+    expect(mdnaText(WFC_MDNA, "10-K")).toBe("");
+  });
+});
+
+describe("pressReleaseText on real releases", () => {
+  it("starts at the headline, not at contact names above it", () => {
+    expect(pressReleaseText(CSCO_TOP).text.split("\n")[0]).toBe("CISCO REPORTS FOURTH QUARTER AND FISCAL YEAR 2026 EARNINGS");
+    expect(pressReleaseText(TJX_TOP).text.split("\n")[0]).toMatch(/^TJX REPORTS Q2 FY27 RESULTS/);
+  });
+
+  it("stops at an About heading that ends in Inc.", () => {
+    const text = pressReleaseText(`HP Inc. Reports Fiscal 2026 Third Quarter Results\n${HPQ_TAIL}`).text;
+    expect(text).toContain("raising its estimate of free cash flow");
+    expect(text).not.toMatch(/About HP|global technology leader/);
+  });
+
+  it("keeps safe-harbor text out of both the narrative and the guidance lines", () => {
+    const text = pressReleaseText(`Ross Stores Reports Strong Second Quarter Sales and Earnings Results\n${ROST_TAIL}`).text;
+    expect(text).toContain("increasing our 2026 fiscal year earnings per share projections");
+    expect(text).not.toMatch(/forward-looking|About Ross|S&P 500/);
+  });
+});
+
+// AMAT 8-K EX-99.1 (2026-08-13), font and style noise stripped; colspans and a hidden column kept.
+// The results table is cut to three of its rows, so its lead-in, not its size, must exclude it.
+const AMAT_OUTLOOK_HTML = `<div>Applied Materials Announces Third Quarter 2026 Results</div>
+<div>&#8220;We expect continued strong revenue growth in the second half of the calendar year, particularly in DRAM as well as leading-edge foundry-logic and advanced packaging.&#8221;</div>
+<div>Results Summary</div><div><table><tr><td colspan="3"></td><td colspan="3">Q3 FY2026</td><td colspan="3"></td><td colspan="3">Q3 FY2025</td><td colspan="3"></td><td colspan="3">Change</td></tr><tr><td colspan="3"></td><td colspan="15">(In millions, except per share amounts and percentages)</td></tr><tr><td colspan="3">Revenue</td><td>$</td><td>9,115&#160;</td><td></td><td colspan="3"></td><td>$</td><td>7,302&#160;</td><td></td><td colspan="3"></td><td colspan="3">25%</td></tr><tr><td colspan="3">Gross margin</td><td colspan="2">50.3&#160;</td><td>%</td><td colspan="3"></td><td colspan="2">48.8&#160;</td><td>%</td><td colspan="3"></td><td colspan="3">1.5 points</td></tr><tr><td colspan="3">Net income</td><td>$</td><td>2,538&#160;</td><td></td><td colspan="3"></td><td>$</td><td>1,779&#160;</td><td></td><td colspan="3"></td><td colspan="3">43%</td></tr></table></div>
+<div>Business Outlook</div><div>Applied&#8217;s total revenue and non-GAAP diluted EPS for the fourth quarter of fiscal 2026 are expected to be as follows&#58;</div><div><table><tr><td colspan="3"></td><td colspan="3"></td><td colspan="3"></td><td colspan="9">Q4 FY2026</td><td colspan="3" style="display:none"></td></tr><tr><td colspan="9">(In millions, except per share amounts)</td><td colspan="9"></td><td colspan="3" style="display:none"></td></tr><tr><td colspan="3">Total revenue</td><td colspan="3"></td><td colspan="3"></td><td>$</td><td>10,250&#160;</td><td></td><td colspan="3">+&#47;-</td><td>$</td><td>500&#160;</td><td></td><td colspan="3" style="display:none"></td></tr><tr><td colspan="3" style="display:none"></td></tr><tr><td colspan="3">Non-GAAP diluted EPS</td><td colspan="3"></td><td colspan="3"></td><td>$</td><td>4.02&#160;</td><td></td><td colspan="3">+&#47;-</td><td>$</td><td>0.20&#160;</td><td></td><td colspan="3" style="display:none"></td></tr></table></div>
+<div>This outlook for non-GAAP diluted EPS excludes known charges related to completed acquisitions of $0.01 per share, includes the normalized tax benefit of share-based compensation of $0.01 per share and includes a net income tax benefit related to intra-entity intangible asset transfers of $0.05 per share.</div>`;
+
+// CSCO 8-K EX-99.1 (2026-08-12) guidance reconciliation: real figures, simplified markup.
+const CSCO_GUIDANCE_HTML = `<p>GAAP TO NON-GAAP GUIDANCE</p><table>
+<tr><td colspan="2">Q1 FY 2027</td><td>Gross Margin</td><td>Operating Margin</td><td>Earnings per Share (1)</td></tr>
+<tr><td colspan="2">GAAP</td><td>63% - 64%</td><td>28% - 29%</td><td>$1.08 - $1.10</td></tr>
+<tr><td colspan="2">Share-based compensation expense</td><td>1.0%</td><td>4.5%</td><td>0.14</td></tr>
+<tr><td colspan="2">Non-GAAP</td><td>65% - 66%</td><td>35.5% - 36.5%</td><td>$1.32 - $1.34</td></tr>
+</table>`;
+
+// WMT (2026-08-20) and INTU (2026-08-25) EX-99.1 guidance tables: real figures, simplified markup.
+const WMT_GUIDANCE_HTML = `<p>Guidance</p><table>
+<tr><td colspan="6">Third quarter</td></tr>
+<tr><td colspan="3">Consolidated metric</td><td colspan="3">Q3 FY27</td></tr>
+<tr><td colspan="3">Net sales (cc)</td><td colspan="3">Increase 3.0% to 3.75%</td></tr>
+<tr><td colspan="3">Adjusted EPS</td><td colspan="3">$0.62 to $0.64</td></tr>
+</table>`;
+const INTU_GUIDANCE_HTML = `<p>Full Year Fiscal 2027 Guidance</p><table>
+<tr><td colspan="3"></td><td colspan="6">GAAP</td><td colspan="6">Non-GAAP</td></tr>
+<tr><td colspan="3"></td><td colspan="3">FY27</td><td colspan="3">Change</td><td colspan="3">FY27</td><td colspan="3">Change</td></tr>
+<tr><td colspan="3">Total Revenue</td><td colspan="3">$23,279 to $23,512</td><td colspan="3">9% to 10%</td></tr>
+<tr><td colspan="3">Diluted Earnings Per Share</td><td colspan="3">$20.12 to $20.36</td><td colspan="3">22% to 24%</td><td colspan="3">$22.88 to $23.12</td><td colspan="3">23% to 24%</td></tr>
+</table>`;
+
+describe("outlook tables", () => {
+  it("keeps the company's outlook figures as label: value lines and drops the results table", () => {
+    const lines = htmlToText(AMAT_OUTLOOK_HTML).split("\n");
+    const at = lines.indexOf("Business Outlook");
+    expect(lines.slice(at + 2, at + 5)).toEqual([
+      "Q4 FY2026 (In millions, except per share amounts)",
+      "Total revenue: $10,250 +/- $500",
+      "Non-GAAP diluted EPS: $4.02 +/- $0.20",
+    ]);
+    expect(lines.join("\n")).not.toMatch(/9,115|7,302|2,538|Gross margin|Net income/);
+  });
+
+  it("carries the outlook figures into the press-release text and its outlook budget", () => {
+    const { text } = pressReleaseText(htmlToText(AMAT_OUTLOOK_HTML));
+    expect(text).toContain("Total revenue: $10,250 +/- $500\nNon-GAAP diluted EPS: $4.02 +/- $0.20\nThis outlook");
+    // Past the narrative budget the rows come in through the outlook section instead.
+    const late = pressReleaseText(htmlToText(AMAT_OUTLOOK_HTML), 20, 400);
+    expect(late.text).toContain("Non-GAAP diluted EPS: $4.02 +/- $0.20");
+    expect(late.outlookWords).toBeGreaterThan(0);
+    expect(late.words).toBeLessThanOrEqual(20 + 400);
+  });
+
+  it("labels each value with its column when the outlook table has several", () => {
+    expect(htmlToText(CSCO_GUIDANCE_HTML).split("\n")).toEqual([
+      "GAAP TO NON-GAAP GUIDANCE",
+      "Q1 FY 2027",
+      "GAAP: Gross Margin 63% - 64%; Operating Margin 28% - 29%; Earnings per Share (1) $1.08 - $1.10",
+      "Share-based compensation expense: Gross Margin 1.0%; Operating Margin 4.5%; Earnings per Share (1) 0.14",
+      "Non-GAAP: Gross Margin 65% - 66%; Operating Margin 35.5% - 36.5%; Earnings per Share (1) $1.32 - $1.34",
+    ]);
+  });
+
+  it("reads a labelled header row, values that open with a word, and stacked column headers", () => {
+    expect(htmlToText(WMT_GUIDANCE_HTML).split("\n")).toEqual([
+      "Guidance",
+      "Third quarter",
+      "Consolidated metric",
+      "Q3 FY27",
+      "Net sales (cc): Increase 3.0% to 3.75%",
+      "Adjusted EPS: $0.62 to $0.64",
+    ]);
+    expect(htmlToText(INTU_GUIDANCE_HTML).split("\n")).toEqual([
+      "Full Year Fiscal 2027 Guidance",
+      "Total Revenue: GAAP FY27 $23,279 to $23,512; GAAP Change 9% to 10%",
+      "Diluted Earnings Per Share: GAAP FY27 $20.12 to $20.36; GAAP Change 22% to 24%; " +
+        "Non-GAAP FY27 $22.88 to $23.12; Non-GAAP Change 23% to 24%",
+    ]);
+  });
+});
+
+describe("isPreliminaryRelease", () => {
+  it("flags a pre-announcement and not a results release", () => {
+    expect(isPreliminaryRelease(ISRG_PRELIMINARY)).toBe(true);
+    expect(isPreliminaryRelease(`<p>${CSCO_TOP.replace(/\n/g, "</p><p>")}</p>`)).toBe(false);
   });
 });

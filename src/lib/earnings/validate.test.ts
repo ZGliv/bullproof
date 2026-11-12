@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { EarningsCall, EvidenceDoc } from "./types";
-import { callHashInput, containsVerbatim, normalizeText, validateModelCall } from "./validate";
+import {
+  callHashInput,
+  closestPassage,
+  containsVerbatim,
+  normalizeText,
+  quoteFromDocument,
+  validateModelCall,
+} from "./validate";
 
 // Excerpts of Apple's fiscal Q4 2026 8-K EX-99.1 and 10-K MD&A, as the packet extractor produced them.
 const PRESS_RELEASE: EvidenceDoc = {
@@ -32,7 +39,13 @@ const MDNA: EvidenceDoc = {
 };
 
 const DOCS = [PRESS_RELEASE, MDNA];
-const CTX = { ticker: "AAPL", docs: DOCS, allowedNumbers: [1.9, 344.63, -7.35, 3.24] };
+const CTX = {
+  ticker: "AAPL",
+  docs: DOCS,
+  allowedNumbers: [344.63, 1.9, 8, 7.35, 3.24],
+  line: 1.9,
+  moves: [7.35, 3.24],
+};
 
 function validCall() {
   return {
@@ -41,12 +54,12 @@ function validCall() {
     move: "under",
     confidence: 3,
     bull: {
-      point: "Revenue reached $114.5 billion, up 12 percent.",
+      point: "Double-digit growth on a $114.5 billion quarter sets a high bar for the December quarter.",
       source: "press_release",
       quote: "The Company posted quarterly revenue of $114.5 billion, up 12 percent year over year.",
     },
     bear: {
-      point: "Margins carried a one-off tariff refund benefit.",
+      point: "Memory costs are rising while the tariff refund that propped up margins will not repeat.",
       source: "mdna",
       quote: "partially offset by higher costs, including memory",
     },
@@ -149,7 +162,8 @@ describe("validateModelCall", () => {
 
   describe("numbers in prose", () => {
     it("rejects a number in the thesis that is not in the evidence", () => {
-      const call = { ...validCall(), thesis: "Revenue grew 12.4% on record iPhone demand." };
+      const thesis = "Revenue grew 12.4% on record iPhone demand, after a 7.35% fall last time.";
+      const call = { ...validCall(), thesis };
       expect(errorsFor(call)).toEqual(["thesis.number_not_in_evidence:12.4"]);
     });
 
@@ -164,7 +178,7 @@ describe("validateModelCall", () => {
     it("checks points and wrong_if too, and reports each figure once", () => {
       const call = {
         ...validCall(),
-        bull: { ...validCall().bull, point: "Services hit $30bn." },
+        bull: { ...validCall().bull, point: "Services hit $30bn on the back of the installed base." },
         wrong_if: "Gross margin falls under 46 percent or 46% again.",
       };
       expect(errorsFor(call)).toEqual(["bull.point.number_not_in_evidence:30", "wrong_if.number_not_in_evidence:46"]);
@@ -172,7 +186,7 @@ describe("validateModelCall", () => {
 
     it("compares values, so $479 billion and 1,234 forms both work", () => {
       const docs = [{ ...PRESS_RELEASE, text: `${PRESS_RELEASE.text}\nBacklog was 1,234 units.` }, MDNA];
-      const call = { ...validCall(), thesis: "Full-year revenue of $479bn and a 1234-unit backlog." };
+      const call = { ...validCall(), thesis: "Full-year revenue of $479bn and a 1234-unit backlog; the line is 1.9%." };
       const result = validateModelCall(call, { ...CTX, docs });
       expect(result.ok).toBe(true);
     });
@@ -213,11 +227,12 @@ describe("validateModelCall", () => {
       const call = {
         ...validCall(),
         bull: { ...validCall().bull, point: "x".repeat(241) },
-        thesis: "x".repeat(301),
+        thesis: `${"x".repeat(296)} 1.9%`,
         wrong_if: "x".repeat(241),
       };
       expect(errorsFor(call)).toEqual(["bull.point.too_long", "thesis.too_long", "wrong_if.too_long"]);
-      const atLimit = { ...validCall(), bull: { ...validCall().bull, point: "x".repeat(240) }, thesis: "x".repeat(300) };
+      const bull = { ...validCall().bull, point: "x".repeat(240) };
+      const atLimit = { ...validCall(), bull, thesis: `${"x".repeat(295)} 1.9%` };
       expect(errorsFor(atLimit)).toEqual([]);
     });
 
@@ -228,6 +243,153 @@ describe("validateModelCall", () => {
       ]);
       expect(errorsFor({ ...validCall(), bear: { ...validCall().bear, quote: "" } })).toEqual(["bear.quote.empty"]);
     });
+  });
+});
+
+describe("published quotes", () => {
+  it("cuts the quote out of the document, so the page shows the filing's own text", () => {
+    const shouted = "APPLE DELIVERED SEPTEMBER QUARTER RECORDS FOR NET INCOME AND EPS.";
+    expect(quoteFromDocument(PRESS_RELEASE.text, shouted)).toBe(
+      "Apple delivered September quarter records for net income and EPS.",
+    );
+    expect(quoteFromDocument(PRESS_RELEASE.text, "Apple's CFO")).toBe("Apple’s CFO");
+    expect(quoteFromDocument(MDNA.text, "including memory. Apple Inc. 2026 Form")).toBe(
+      "including memory.\nApple Inc. | 2026 Form".replace(/\s+/g, " "),
+    );
+    expect(quoteFromDocument(PRESS_RELEASE.text, "quarterly revenue of $114")).toBeNull();
+  });
+
+  it("finds the sentence a misquote came from, for the retry", () => {
+    // A real calls-v2 misquote: Target's 10-Q says "The increase reflected higher compensation expense".
+    const text = [
+      "For the three months ended August 1, 2026, our SG&A expense rate was 21.6 percent compared with 21.3 percent.",
+      "The increase reflected higher compensation expense, including stores payroll and incentive compensation.",
+    ].join(" ");
+    const misquote = "This increase reflects higher compensation expense, including stores payroll";
+    expect(closestPassage(text, misquote)).toEqual({
+      text: "The increase reflected higher compensation expense, including stores payroll and incentive compensation.",
+      shared: 7,
+    });
+    expect(closestPassage(text, "zzz")).toBeNull();
+  });
+
+  it("locks the document's text, not the model's", () => {
+    const call = validCall();
+    call.bull.quote = call.bull.quote.toUpperCase();
+    const result = validateModelCall(call, CTX);
+    expect(result.ok && result.call.bull.quote).toBe(validCall().bull.quote);
+  });
+});
+
+describe("writing rules", () => {
+  // Each thesis cites the line, so the move rule stays out of the way of the rule under test.
+  const withThesis = (thesis: string) => errorsFor({ ...validCall(), thesis: `${thesis} Line 1.9%.` });
+  const withWrongIf = (wrong_if: string) => errorsFor({ ...validCall(), wrong_if });
+  const withBull = (bull: Partial<ReturnType<typeof validCall>["bull"]>) =>
+    errorsFor({ ...validCall(), bull: { ...validCall().bull, ...bull } });
+
+  it("rejects a wrong_if that restates how the call is graded (real calls-v1 output)", () => {
+    expect(withWrongIf("The stock closes down or the absolute move exceeds 1.9%.")).toEqual([
+      "wrong_if.restates_grading",
+    ]);
+    expect(withWrongIf("The shares fall after the print.")).toEqual(["wrong_if.restates_grading"]);
+    expect(withWrongIf("A move above 1.9% on the graded session.")).toEqual(["wrong_if.restates_grading"]);
+    expect(withWrongIf("Gross margin falls below 47.9 percent once tariff refunds fade.")).toEqual([]);
+  });
+
+  it("rejects talk of the line or the move size when there is no line", () => {
+    const noLine = { ...CTX, line: null, moves: [], allowedNumbers: [344.63] };
+    const errors = (fields: object) => {
+      const thesis = "Record Q4 sales should carry into the December quarter.";
+      const result = validateModelCall({ ...validCall(), thesis, ...fields }, noLine);
+      return result.ok ? [] : result.errors;
+    };
+    expect(errors({ thesis: "Record Q4 sales should carry into the December quarter." })).toEqual([]);
+    expect(
+      errors({ wrong_if: "The stock closes up or the absolute move exceeds the median of the past two reactions." }),
+    ).toEqual(["wrong_if.restates_grading", "wrong_if.no_line_mentioned"]);
+    expect(errors({ thesis: "Record Q4 sales, but the typical move is large." })).toEqual([
+      "thesis.no_line_mentioned",
+    ]);
+    expect(errors({})).toEqual([]);
+    expect(errors({ thesis: validCall().thesis })).toEqual([
+      "thesis.no_line_mentioned",
+      "thesis.number_not_in_evidence:1.9",
+    ]);
+    // Without a line the past moves are not supplied figures either.
+    expect(errors({ thesis: "Record Q4 sales after a 7.35% fall last time." })).toEqual([
+      "thesis.number_not_in_evidence:7.35",
+    ]);
+  });
+
+  it("needs the thesis to argue the move from the line or a past reaction when there is a line", () => {
+    const thesisErrors = (thesis: string) => errorsFor({ ...validCall(), thesis });
+    expect(thesisErrors("Record Q4 sales should carry into the December quarter.")).toEqual(["thesis.move_unargued"]);
+    expect(thesisErrors("Record Q4 sales carry over; the -7.35% fall last time shows misses land hard.")).toEqual([]);
+  });
+
+  it("rejects advice, consensus talk and the first person, but not business words", () => {
+    expect(withThesis("Investors should buy the stock before the December quarter.")).toEqual([
+      "thesis.advice_language",
+    ]);
+    expect(withThesis("A price target is out of scope; record Q4 sales carry over.")).toEqual([
+      "thesis.advice_language",
+    ]);
+    expect(withThesis("Revenue should beat consensus on record Q4 sales.")).toEqual(["thesis.invented_consensus"]);
+    expect(withThesis("Analysts expect record Q4 sales to carry over.")).toEqual(["thesis.invented_consensus"]);
+    expect(withBull({ point: "Our cloud business nearly quadrupled, and that demand should carry over." })).toEqual([
+      "bull.point.first_person",
+    ]);
+    expect(withThesis("US demand and short lead times hold up record Q4 sales into the next quarter.")).toEqual([]);
+  });
+
+  it("rejects unsupplied stock-move figures, and percentages the documents only hold as plain numbers", () => {
+    expect(withThesis("Record Q4 sales; the shares could rally 12% from here.")).toEqual([
+      "thesis.stock_forecast:12",
+    ]);
+    expect(withThesis("Record Q4 sales; the stock fell 7.35% after the last report.")).toEqual([]);
+    expect(withThesis("Services revenue grew 114.5% in Q4.")).toEqual(["thesis.number_not_in_evidence:114.5"]);
+    expect(withThesis("Revenue grew 12% in Q4 on iPhone demand.")).toEqual([]);
+  });
+
+  it("allows ISO dates and small counts, but not other bare small numbers", () => {
+    expect(withThesis("3 of the last 8 reactions beat the 1.9% line, including -7.35% on 2026-07-31.")).toEqual([]);
+    expect(withThesis("A 2% revenue shortfall would undo the record Q4 sales.")).toEqual([
+      "thesis.number_not_in_evidence:2",
+    ]);
+    expect(withThesis("Record Q4 sales, with results due on the 11th, 11 days out.")).toEqual([
+      "thesis.number_not_in_evidence:11",
+    ]);
+  });
+
+  it("rejects points that copy their quote, and points too short to say anything", () => {
+    const quote = validCall().bull.quote;
+    expect(withBull({ point: quote })).toEqual(["bull.point_copies_quote"]);
+    expect(withBull({ point: `As reported, ${quote}` })).toEqual(["bull.point_copies_quote"]);
+    expect(withBull({ point: "Revenue grew." })).toEqual(["bull.point.too_short"]);
+  });
+
+  it("rejects hedged policy and risk-factor quotes, but not hedged guidance with a figure", () => {
+    const text = [
+      "Revenue by segment in a particular period may be significantly impacted by the timing of revenue recognition for complex transactions with multiple performance obligations.",
+      "Our revenue is concentrated among a limited number of direct and indirect customers and this trend may continue.",
+      "Gross margin could be between 47 percent and 48 percent in the December quarter.",
+      "We account for warrants as a reduction in revenue. Refer to Note 12 for details.",
+    ].join("\n");
+    const docs = [PRESS_RELEASE, { ...MDNA, text }];
+    const bearQuote = (quote: string) => {
+      const result = validateModelCall({ ...validCall(), bear: { ...validCall().bear, quote } }, { ...CTX, docs });
+      return result.ok ? [] : result.errors;
+    };
+    const policy = "may be significantly impacted by the timing of revenue recognition for complex transactions";
+    expect(bearQuote(policy)).toEqual([
+      "bear.quote_boilerplate",
+    ]);
+    expect(bearQuote("limited number of direct and indirect customers and this trend may continue")).toEqual([
+      "bear.quote_boilerplate",
+    ]);
+    expect(bearQuote("as a reduction in revenue. Refer to Note 12 for details.")).toEqual(["bear.quote_boilerplate"]);
+    expect(bearQuote("Gross margin could be between 47 percent and 48 percent in the December quarter.")).toEqual([]);
   });
 });
 

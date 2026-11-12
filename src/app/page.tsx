@@ -1,16 +1,10 @@
 import { CallTable } from "@/components/calls/call-table";
 import { RecordStrip } from "@/components/calls/record-strip";
+import { latestLock } from "@/components/calls/format";
 import { Shell, StateRow } from "@/components/calls/shell";
 import { getBoard } from "@/lib/earnings/board";
-import type { BoardResponse } from "@/lib/earnings/types";
 
 export const revalidate = 30;
-
-/** Lock time of the current slate: the latest publish among calls still awaiting a grade. */
-function slateLockedAt(board: BoardResponse): string | null {
-  const times = board.slate.map((call) => call.publishedAt).sort();
-  return times.at(-1) ?? null;
-}
 
 export default async function SlatePage() {
   const board = await getBoard();
@@ -21,10 +15,12 @@ export default async function SlatePage() {
       </Shell>
     );
   }
+  // The header shows the latest lock; a report day locked on an earlier night carries its own.
+  const lockedAt = latestLock(board.slate);
   return (
-    <Shell active="slate" lockedAt={slateLockedAt(board)}>
+    <Shell active="slate" lockedAt={lockedAt}>
       <RecordStrip record={board.record} />
-      <CallTable calls={board.slate} mode="slate" label="Slate" />
+      <CallTable calls={board.slate} mode="slate" label="Slate" lockedAt={lockedAt} />
       <CallTable calls={board.recent} mode="results" label="Results" />
     </Shell>
   );

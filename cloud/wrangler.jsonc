@@ -7,12 +7,12 @@
     "binding": "AI"
   },
   "vars": {
-    "ENABLED": "true",
+    "ENABLED": "false",
     "RESEARCH_URL": "https://bullproof.vercel.app"
   },
   "triggers": {
     "crons": [
-      "30,45 1 * * MON-FRI",
+      "15,30,45 1 * * MON-FRI",
       "45 22 * * MON-FRI"
     ]
   },

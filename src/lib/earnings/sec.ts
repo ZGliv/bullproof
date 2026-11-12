@@ -6,6 +6,7 @@ import { cached, ResearchError, secResponse, universe } from "@/lib/live-researc
 import {
   earningsReleaseScore,
   htmlToText,
+  isPreliminaryRelease,
   mdnaText,
   parseFilingIndex,
   pressReleaseExhibit,
@@ -30,6 +31,10 @@ const ENOUGH_RELEASES = 9;
 const MAX_HISTORY_PAGES = 16;
 /** Releases accepted within this many days before asOf mean the company has already reported. */
 const REPORTED_WINDOW_DAYS = 45;
+/** Consecutive quarterly releases are ~90 days apart; an older newest release means releases went missing. */
+const STALE_RELEASE_DAYS = 125;
+/** Exhibits and periodic reports never change once filed. */
+const DOCUMENT_TTL = DAY;
 /** A quarter is at least ~89 days, so a 2.02 8-K earlier than this after the last period end is intra-quarter. */
 const MIN_QUARTER_DAYS = 85;
 const MIN_PRESS_RELEASE_WORDS = 100;
@@ -148,7 +153,8 @@ export function findReleases(filings: Filing[], cik: string): EarningsRelease[] 
     const earliest = addDays(newest.reportDate, MIN_QUARTER_DAYS);
     const pending = eightKs
       .filter((k) => !matched.has(k.accession) && k.filingDate > newest.filingDate && k.filingDate >= earliest)
-      .sort((a, b) => b.acceptedAt.localeCompare(a.acceptedAt));
+      // The newest filing day, and on that day the first 8-K: a second same-day 2.02 8-K is a follow-up.
+      .sort((a, b) => b.filingDate.localeCompare(a.filingDate) || a.acceptedAt.localeCompare(b.acceptedAt));
     if (pending.length) releases.push(toRelease(pending[0], null, cik));
   }
   return releases.sort((a, b) => b.acceptedAt.localeCompare(a.acceptedAt)).slice(0, MAX_RELEASES);
@@ -227,6 +233,7 @@ async function lookupCik(ticker: string): Promise<string> {
   return listing.cik;
 }
 
+/** Throws rather than serve a stale copy: a list missing today's 8-K would defeat the already-reported guard. */
 async function companyFilings(ticker: string): Promise<{ value: CompanyFilings; fetchedAt: IsoInstant }> {
   const result = await cached(`earnings:${ticker}`, async (): Promise<CompanyFilings> => {
     const cik = await lookupCik(ticker);
@@ -241,6 +248,7 @@ async function companyFilings(ticker: string): Promise<{ value: CompanyFilings; 
       sharesOutstanding: await sharesOutstanding(cik),
     };
   });
+  if (result.stale) throw new ResearchError("SEC filings could not be refreshed.");
   return { value: result.value, fetchedAt: result.fetchedAt };
 }
 
@@ -261,11 +269,13 @@ export async function getReleases(ticker: string): Promise<ReleasesResponse> {
 }
 
 interface ChosenExhibit {
-  filing: Filing;
+  accession: string;
+  acceptedAt: IsoInstant;
   type: string;
   url: string;
   text: string;
   score: number;
+  preliminary: boolean;
 }
 
 /** Scores the EX-99 exhibit of every 2.02 8-K filed on the release's filing date and keeps the best. */
@@ -275,17 +285,29 @@ async function chooseExhibit(company: CompanyFilings, release: EarningsRelease):
   const sameDay = company.filings
     .filter((f) => isEarnings8K(f) && f.filingDate === releaseFiling.filingDate)
     .sort((a, b) => a.acceptedAt.localeCompare(b.acceptedAt));
-  let best: ChosenExhibit | null = null;
-  for (const filing of sameDay) {
-    const index = parseFilingIndex(await secText(filingIndexUrl(company.cik, filing.accession)));
-    const exhibit = pressReleaseExhibit(index);
-    if (!exhibit) continue;
-    const text = htmlToText(await secText(exhibit.url));
-    const score = earningsReleaseScore(text);
-    if (score > 0 && (!best || score > best.score))
-      best = { filing, type: exhibit.type, url: exhibit.url, text, score };
-  }
-  return best;
+  const load = async (): Promise<ChosenExhibit | null> => {
+    let best: ChosenExhibit | null = null;
+    for (const filing of sameDay) {
+      const index = parseFilingIndex(await secText(filingIndexUrl(company.cik, filing.accession)));
+      const exhibit = pressReleaseExhibit(index);
+      if (!exhibit) continue;
+      const html = await secText(exhibit.url);
+      const text = htmlToText(html);
+      const score = earningsReleaseScore(text);
+      if (score > 0 && (!best || score > best.score))
+        best = {
+          accession: filing.accession,
+          acceptedAt: filing.acceptedAt,
+          type: exhibit.type,
+          url: exhibit.url,
+          text,
+          score,
+          preliminary: isPreliminaryRelease(html),
+        };
+    }
+    return best;
+  };
+  return (await cached(`earnings-exhibit:${release.accession}`, load, DOCUMENT_TTL)).value;
 }
 
 function newestPeriodic(filings: Filing[]): Filing | null {
@@ -294,11 +316,10 @@ function newestPeriodic(filings: Filing[]): Filing | null {
     .reduce<Filing | null>((best, f) => (!best || f.acceptedAt > best.acceptedAt ? f : best), null);
 }
 
-async function mdnaDoc(company: CompanyFilings): Promise<EvidenceDoc | null> {
-  const report = newestPeriodic(company.filings);
-  if (!report) return null;
+async function mdnaDoc(company: CompanyFilings, report: Filing): Promise<EvidenceDoc | null> {
   const url = `${accessionPath(company.cik, report.accession)}/${report.primaryDocument.replace(/^\/?ix\?doc=/, "")}`;
-  const text = mdnaText(htmlToText(await secText(url)), report.form);
+  const load = async () => mdnaText(htmlToText(await secText(url)), report.form);
+  const text = (await cached(`earnings-mdna:${report.accession}`, load, DOCUMENT_TTL)).value;
   if (!text) return null;
   return {
     source: "mdna",
@@ -311,50 +332,76 @@ async function mdnaDoc(company: CompanyFilings): Promise<EvidenceDoc | null> {
   };
 }
 
-function refusal(
-  ticker: string,
-  reason: Extract<PacketResponse, { ok: false }>["reason"],
-  detail: string,
-): PacketResponse {
+type Refusal = Extract<PacketResponse, { ok: false }>;
+
+function refusal(ticker: string, reason: Refusal["reason"], detail: string): Refusal {
   return { ok: false, ticker, reason, detail };
 }
 
-/** Evidence packet for a company expected to report after `asOf`: its previous quarter's press release and MD&A. */
-export async function getPacket(ticker: string, asOf: IsoInstant): Promise<PacketResponse> {
-  try {
-    const { value: company, fetchedAt } = await companyFilings(ticker);
-    const newest = company.releases[0];
-    if (!newest) return refusal(ticker, "not-8k-filer", "No 8-K Item 2.02 earnings releases on file.");
-    const ageDays = (Date.parse(asOf) - Date.parse(newest.acceptedAt)) / DAY;
-    if (ageDays < REPORTED_WINDOW_DAYS)
-      return refusal(
-        ticker,
-        "already-reported",
-        `Newest earnings release ${newest.accession} was accepted ${newest.acceptedAt}.`,
-      );
-
-    const exhibit = await chooseExhibit(company, newest);
-    const pressRelease = exhibit && pressReleaseText(exhibit.text);
-    if (!exhibit || !pressRelease || pressRelease.words < MIN_PRESS_RELEASE_WORDS)
-      return refusal(ticker, "no-press-release", `No EX-99 exhibit reads as an earnings release in ${newest.accession}.`);
-
-    const docs: EvidenceDoc[] = [
-      {
-        source: "press_release",
-        form: `8-K ${exhibit.type}`,
-        accession: exhibit.filing.accession,
-        filedAt: exhibit.filing.acceptedAt,
-        periodEnd: newest.periodEnd,
-        url: exhibit.url,
-        text: pressRelease.text,
-      },
-    ];
-    const mdna = await mdnaDoc(company);
-    if (mdna && wordCount(mdna.text) > 0) docs.push(mdna);
-    return { ...releasesResponse(company, fetchedAt), ok: true, asOf, docs };
-  } catch (error) {
-    if (error instanceof ResearchError && error.status === 404)
-      return refusal(ticker, "unknown-ticker", error.message);
-    return refusal(ticker, "sec-unavailable", error instanceof Error ? error.message : "SEC request failed.");
+/**
+ * The release a packet may be built from: the newest one, which must be older than the
+ * already-reported window, recent, and about the same quarter as the newest 10-Q/10-K.
+ * Issuers that moved their results 8-Ks off Item 2.02 fail the last two tests.
+ */
+export function packetRelease(
+  ticker: string,
+  releases: EarningsRelease[],
+  periodic: Filing | null,
+  asOf: IsoInstant,
+): EarningsRelease | Refusal {
+  const newest = releases[0];
+  if (!newest) return refusal(ticker, "not-8k-filer", "No 8-K Item 2.02 earnings releases on file.");
+  const ageDays = (Date.parse(asOf) - Date.parse(newest.acceptedAt)) / DAY;
+  const release = `Newest earnings release ${newest.accession}`;
+  if (ageDays < REPORTED_WINDOW_DAYS)
+    return refusal(ticker, "already-reported", `${release} was accepted ${newest.acceptedAt}.`);
+  if (ageDays > STALE_RELEASE_DAYS || !periodic || newest.periodEnd !== periodic.reportDate) {
+    const report = periodic ? `${periodic.accession} (period ${periodic.reportDate})` : "none";
+    const detail = `${release} (period ${newest.periodEnd}, accepted ${newest.acceptedAt}) does not cover report ${report}.`;
+    return refusal(ticker, "stale-release", detail);
   }
+  return newest;
+}
+
+/**
+ * Evidence packet for a company expected to report after `asOf`: its previous quarter's press release and MD&A.
+ * SEC failures throw (the route answers 503 and the caller retries); refusals are definite.
+ */
+export async function getPacket(ticker: string, asOf: IsoInstant): Promise<PacketResponse> {
+  let company: CompanyFilings;
+  let fetchedAt: IsoInstant;
+  try {
+    ({ value: company, fetchedAt } = await companyFilings(ticker));
+  } catch (error) {
+    if (error instanceof ResearchError && error.status === 404) return refusal(ticker, "unknown-ticker", error.message);
+    throw error;
+  }
+
+  let releases = company.releases;
+  // A pre-announcement ahead of an investor conference is not the quarter's release.
+  if (releases[0] && releases[0].periodEnd === null && (await chooseExhibit(company, releases[0]))?.preliminary)
+    releases = releases.slice(1);
+  const periodic = newestPeriodic(company.filings);
+  const newest = packetRelease(ticker, releases, periodic, asOf);
+  if ("ok" in newest) return newest;
+
+  const exhibit = await chooseExhibit(company, newest);
+  const pressRelease = exhibit && pressReleaseText(exhibit.text);
+  if (!exhibit || !pressRelease || pressRelease.words < MIN_PRESS_RELEASE_WORDS)
+    return refusal(ticker, "no-press-release", `No EX-99 exhibit reads as an earnings release in ${newest.accession}.`);
+
+  const docs: EvidenceDoc[] = [
+    {
+      source: "press_release",
+      form: `8-K ${exhibit.type}`,
+      accession: exhibit.accession,
+      filedAt: exhibit.acceptedAt,
+      periodEnd: newest.periodEnd,
+      url: exhibit.url,
+      text: pressRelease.text,
+    },
+  ];
+  const mdna = periodic && (await mdnaDoc(company, periodic));
+  if (mdna && wordCount(mdna.text) > 0) docs.push(mdna);
+  return { ...releasesResponse(company, fetchedAt), releases, ok: true, asOf, docs };
 }

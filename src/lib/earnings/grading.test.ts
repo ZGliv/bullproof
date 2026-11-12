@@ -36,11 +36,13 @@ function input(overrides: Overrides = {}): GradeInput {
     calendar: CALENDAR,
     bars: AAPL_BARS,
     releaseAt: "2026-11-02T21:30:00.000Z",
+    releaseDate: null,
     releaseSource: "8-K",
     now: "2026-11-03T22:45:00.000Z",
     ...rest,
     call: {
       session: "2026-11-03",
+      reportDate: "2026-11-02",
       publishedAt: "2026-10-31T01:30:00.000Z",
       direction: "down",
       overUnder: "under",
@@ -219,5 +221,35 @@ describe("gradeCall: voids", () => {
   it("voids a call whose session the calendar shows closed; stays pending past the calendar's end", () => {
     expect(gradeCall(input({ call: { session: "2026-11-26" } }))).toEqual({ status: "void", reason: "session-mismatch" });
     expect(gradeCall(input({ call: { session: "2027-01-05" } }))).toEqual({ status: "pending" });
+  });
+});
+
+describe("gradeCall: a release known only by its 8-K date of report", () => {
+  // The 8-K went in two days after the press release; its date of report is the release day.
+  const late = { releaseAt: "2026-11-04T21:05:00.000Z", releaseSource: "8-K" as const };
+
+  it("grades the call when the date of report is the calendar's report date", () => {
+    const outcome = gradeCall(input({ ...late, releaseDate: "2026-11-02" }));
+    expect(outcome).toMatchObject({ status: "graded", grade: { movePct: -1.9, releaseAt: late.releaseAt } });
+  });
+
+  it("voids pre-release when the press release went out on or before the lock's New York date", () => {
+    // Locked Friday 10-30 21:30 EDT; the release was dated 10-30 and the 8-K came after the lock.
+    expect(gradeCall(input({ ...late, releaseDate: "2026-10-30" }))).toEqual({ status: "void", reason: "pre-release" });
+  });
+
+  it("voids session-mismatch when the release day differs from the calendar's", () => {
+    expect(gradeCall(input({ ...late, releaseDate: "2026-11-03" }))).toEqual({
+      status: "void",
+      reason: "session-mismatch",
+    });
+  });
+
+  it("uses a same-day headline time over the date alone", () => {
+    const headline = { releaseAt: "2026-11-02T15:00:00.000Z", releaseSource: "news" as const };
+    expect(gradeCall(input({ ...headline, releaseDate: "2026-11-02" }))).toEqual({
+      status: "void",
+      reason: "intraday-release",
+    });
   });
 });

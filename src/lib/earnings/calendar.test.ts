@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { DailyBar, Reporter, TradingDay } from "./types";
 import {
+  displayName,
   expectedGradeSession,
   isCalendarCsv,
   liquidityRank,
@@ -161,5 +162,45 @@ describe("liquidityRank", () => {
     expect(liquidityRank([reporter("AAPL")], { AAPL: aapl }, { minPrice: 400 })).toEqual([]);
     expect(liquidityRank([reporter("AAPL")], { AAPL: aapl }, { minDollarVolume: 1e12 })).toEqual([]);
     expect(liquidityRank([reporter("KRUS")], { KRUS: krus }, { minDollarVolume: 1_000_000 })).toHaveLength(1);
+  });
+});
+
+describe("displayName", () => {
+  // Real Alpha Vantage EARNINGS_CALENDAR names (pulled 2026-11-11) and their display form.
+  const NAMES: [string, string, string][] = [
+    ["CSCO", "CISCO SYSTEMS INCORPORATED", "Cisco Systems Inc"],
+    ["AMAT", "APPLIED MATERIALS INCORPORATED", "Applied Materials Inc"],
+    ["ABSI", "ABSCI CORPORATION", "Absci Corporation"],
+    ["TWST", "TWIST BIOSCIENCE CORPORATION", "Twist Bioscience Corporation"],
+    ["NBIS", "NEBIUS GROUP NAAMLOZE VENNOOTSCHAP", "Nebius Group N.V."],
+    ["DLO", "DLOCAL LIMITED", "Dlocal Limited"],
+    ["DIS", "WALT DISNEY COMPANY (THE)", "The Walt Disney Company"],
+    ["HD", "HOME DEPOT INCORPORATED (THE)", "The Home Depot Inc"],
+    ["TJX", "TJX COMPANIES INCORPORATED (THE)", "The TJX Companies Inc"],
+    ["JD", "JD.COM INCORPORATED", "JD.com Inc"],
+    ["LOW", "LOWE'S COMPANIES INCORPORATED", "Lowe's Companies Inc"],
+    ["BJ", "BJ'S WHOLESALE CLUB HOLDINGS INCORPORATED", "BJ's Wholesale Club Holdings Inc"],
+    ["M", "MACY'S INCORPORATED", "Macy's Inc"],
+    ["BALY", "BALLY'S CORPORATION", "Bally's Corporation"],
+    ["CINT", "CI&T INCORPORATED", "CI&T Inc"],
+    ["CXII", "CHURCHILL CAPITAL CORPORATION XII", "Churchill Capital Corporation XII"],
+    ["AIB", "AIB DATA CENTERS INCORPORATED", "AIB Data Centers Inc"],
+    ["AADX", "APPLIED AEROSPACE & DEFENSE INCORPORATED", "Applied Aerospace & Defense Inc"],
+    ["AIRT", "AIR T INCORPORATED", "Air T Inc"],
+    ["APUS", "APIMEDS PHARMACEUTICALS US INCORPORATED", "Apimeds Pharmaceuticals US Inc"],
+    ["RMR", "THE RMR GROUP INCORPORATED", "The RMR Group Inc"],
+    ["NDLS", "NOODLES & COMPANY", "Noodles & Company"],
+    ["BMO", "BANK OF MONTREAL", "Bank of Montreal"],
+    ["VALN", "VALNEVA SE", "Valneva SE"],
+    ["OFRM", "ONCE UPON A FARM, PBC", "Once Upon a Farm, PBC"],
+    ["GBDC", "GOLUB CAPITAL BDC INCORPORATED", "Golub Capital BDC Inc"],
+    ["CAE", "CAE INCORPORATED", "CAE Inc"],
+    ["BBY", "BEST BUY COMPANY INCORPORATED", "Best Buy Company Inc"],
+    ["JJSF", "J & J SNACK FOODS CORPORATION", "J & J Snack Foods Corporation"],
+    ["AZ", "A2Z CUST2MATE SOLUTIONS CORPORATION", "A2Z Cust2mate Solutions Corporation"],
+    ["CODX", "COMPANY-DIAGNOSTICS INCORPORATED", "Company-Diagnostics Inc"],
+  ];
+  it.each(NAMES)("%s: %s", (ticker, raw, expected) => {
+    expect(displayName(raw, ticker)).toBe(expected);
   });
 });

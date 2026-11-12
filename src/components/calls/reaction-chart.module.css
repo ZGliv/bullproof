@@ -17,17 +17,24 @@
 }
 
 .axis,
-.lineMark {
+.lineMark,
+.divider {
   stroke-width: 1;
   vector-effect: non-scaling-stroke;
   shape-rendering: crispEdges;
 }
 
+/* The ±line is the reference the call is graded against, so it outranks the zero axis. */
 .axis {
-  stroke: var(--bp-muted);
+  stroke: var(--bp-line);
 }
 
 .lineMark {
+  stroke: var(--bp-muted);
+  stroke-dasharray: 3 3;
+}
+
+.divider {
   stroke: var(--bp-line);
 }
 
@@ -37,6 +44,21 @@
 
 .down {
   fill: var(--bp-down);
+}
+
+/* The graded move: outlined in its direction colour, apart from the history. */
+.result {
+  fill: var(--bp-bg);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+.result.up {
+  stroke: var(--bp-up);
+}
+
+.result.down {
+  stroke: var(--bp-down);
 }
 
 .value,
@@ -50,7 +72,10 @@
   white-space: nowrap;
 }
 
+/* Opaque so the dashed line passes behind a label instead of through it. */
 .value {
+  padding: 0 2px;
+  background: var(--bp-bg);
   transform: translateX(-50%);
 }
 
@@ -60,6 +85,10 @@
 
 .below {
   margin-top: 2px;
+}
+
+.resultValue {
+  font-weight: 600;
 }
 
 .lineLabel {
@@ -85,6 +114,10 @@
   font-size: 11px;
   line-height: 14px;
   white-space: nowrap;
+}
+
+.resultTick {
+  color: var(--bp-ink);
 }
 
 .empty {

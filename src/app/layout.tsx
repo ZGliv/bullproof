@@ -16,6 +16,7 @@ const mono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://bullproof.vercel.app"),
   title: {
     default: "Bullproof",
     template: "%s | Bullproof",

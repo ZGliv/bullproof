@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CallDetail } from "@/components/calls/call-detail";
+import { callHref, callTitle } from "@/components/calls/format";
 import { Shell, StateRow } from "@/components/calls/shell";
 import { getCall } from "@/lib/earnings/board";
 
@@ -20,7 +21,14 @@ async function callId(params: Params["params"]): Promise<string> {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const call = await getCall(await callId(params));
   if (!call || call === "not-found") return { title: "Call" };
-  return { title: `${call.ticker} ${call.session}` };
+  const title = callTitle(call);
+  const url = callHref(call.id);
+  return {
+    title,
+    description: call.thesis,
+    alternates: { canonical: url },
+    openGraph: { title, description: call.thesis, url, type: "article" },
+  };
 }
 
 export default async function CallPage({ params }: Params) {

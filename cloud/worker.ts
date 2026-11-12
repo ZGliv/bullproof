@@ -2,7 +2,7 @@ import {syncRequest} from './sync';
 import {catalystResponse} from './catalysts';
 import {companyEvidence,selectCandidates,eligibility,strategyRules,type StrategyId} from '../src/lib/paper/selection';
 import {marketResponse} from './market';
-import {GRADE_CRON,PUBLISH_CRON,earningsRoute,gradeDue,publishSlate} from './earnings';
+import {GRADE_CRON,PUBLISH_CRON,earningsRoute,gradeDue,jobFailed,publishSlate} from './earnings';
 import {account,execute,mark,policies,validateProposal} from '../src/lib/paper/engine';
 import type {Decision,Evidence,Ledger,Quote} from '../src/lib/paper/engine';
 import {clockIsFresh,marketDay} from '../src/lib/paper/schedule';
@@ -27,7 +27,7 @@ async function persist(env:Env,state:State,token:string){
 async function release(env:Env,token:string){await env.DB.prepare("UPDATE runner_lock SET token='',expires=0 WHERE id=1 AND token=?").bind(token).run();}
 async function fetchJson(url:string,headers?:HeadersInit){const r=await fetch(url,{headers,signal:AbortSignal.timeout(45000)});if(!r.ok)throw new Error(`${new URL(url).hostname} returned ${r.status}`);return r.json();}
 export function parseModelResponse(raw:unknown){const r=raw as {response?:string;choices?:{message?:{content?:string}}[]};const text=r.choices?.[0]?.message?.content??r.response;if(typeof text!=='string')throw new Error('Model returned no content');return JSON.parse(text.replace(/<think>[\s\S]*?<\/think>/g,'').replace(/^```(?:json)?\s*|\s*```$/g,'').trim());}
-export function publicSnapshot(s:State,enabled:boolean){return {...s.ledger,updatedAt:s.updatedAt,model:s.model,connected:s.connected,messages:s.messages,policies,accounts:[...policies.map(p=>p.id),'rules','spy'].map(id=>({id,...account(s.ledger,id)})),automation:{enabled,runner:'Cloudflare Workers',lastTrigger:s.lastTrigger,lastScheduledAt:s.lastScheduledAt,lastScheduledOutcome:s.lastScheduledOutcome,schedule:'Every 30 minutes; Alpaca regular-session clock controls execution',lastCheckAt:s.lastCheckAt,nextOpen:s.nextOpen,marketOpen:s.marketOpen,lastOutcome:s.lastOutcome,requires:'No laptop or Codex required'},execution:'Cloud-hosted internal paper simulation using IEX quotes. No broker orders. Whole shares, bid/ask + 5 bps adverse slippage, zero commissions. Active targets capped at 20%, passive SPY at 100%. Price returns only; corporate actions and dividends need reconciliation. Cloudflare Qwen model began with cloud-v1; earlier local decisions remain in history.'};}
+export function publicSnapshot(s:State,enabled:boolean){return {...s.ledger,updatedAt:s.updatedAt,model:s.model,connected:s.connected,messages:s.messages,policies,accounts:[...policies.map(p=>p.id),'rules','spy'].map(id=>({id,...account(s.ledger,id)})),automation:{enabled,runner:'Cloudflare Workers',lastTrigger:s.lastTrigger,lastScheduledAt:s.lastScheduledAt,lastScheduledOutcome:s.lastScheduledOutcome,schedule:'Not scheduled',lastCheckAt:s.lastCheckAt,nextOpen:s.nextOpen,marketOpen:s.marketOpen,lastOutcome:s.lastOutcome,requires:'Manual runs only'},execution:'Cloud-hosted internal paper simulation using IEX quotes. No broker orders. Whole shares, bid/ask + 5 bps adverse slippage, zero commissions. Active targets capped at 20%, passive SPY at 100%. Price returns only; corporate actions and dividends need reconciliation. Cloudflare Qwen model began with cloud-v1; earlier local decisions remain in history.'};}
 async function research(env:Env,s:State,token:string){
  if(!s.evidence.length||s.evidenceVersion!==VERSION){
   const gathered:Evidence[]=[];let cursor:string|null=null;
@@ -92,13 +92,19 @@ const worker = {
    if(path==='/admin/earnings/grade'&&request.method==='POST')return json(await gradeDue(env));
    if(path==='/admin/probe'&&request.method==='POST'){const r=await env.AI.run(MODEL,{max_tokens:64,messages:[{role:'user',content:'/no_think Reply with just the word READY.'}]});return json({model:MODEL,responded:JSON.stringify(r).includes('READY')});}
    return json({error:'Not found'},404);
-  }catch(e){return json({error:e instanceof Error?e.message:'Runner unavailable'},503);}
+  }catch(e){
+   // Public routes never echo internal errors (D1 text names tables); admin callers get the message.
+   console.error(path,e);
+   return json({error:path.startsWith('/admin/')&&e instanceof Error?e.message:'Unavailable'},503);
+  }
  },
  async scheduled(controller:{cron?:string},env:Env){
-  // Earnings jobs catch their own errors; the portfolio tick keeps its rethrowing behaviour.
-  if(controller?.cron===PUBLISH_CRON){await publishSlate(env);return;}
-  if(controller?.cron===GRADE_CRON){await gradeDue(env);return;}
-  await tick(env,'scheduled');
+  // The portfolio cron is retired. The earnings jobs never throw; a failed outcome is rethrown here
+  // after the run row is written, so the failure shows in the Worker's cron history and logs.
+  const job=controller?.cron===PUBLISH_CRON?publishSlate:controller?.cron===GRADE_CRON?gradeDue:null;
+  if(!job){console.error(`Unknown cron: ${controller?.cron}`);return;}
+  const {outcome}=await job(env);
+  if(jobFailed(outcome))throw new Error(outcome);
  }
 };
 

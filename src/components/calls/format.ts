@@ -61,14 +61,73 @@ export const VOID_LABEL: Record<VoidReason, string> = {
   "missing-bar": "Missing price bar",
 };
 
-export function groupBySession(calls: EarningsCall[]): { session: SessionDate; calls: EarningsCall[] }[] {
-  const groups: { session: SessionDate; calls: EarningsCall[] }[] = [];
-  for (const call of calls) {
+export interface ReportGroup {
+  reportDate: SessionDate;
+  calls: EarningsCall[];
+}
+
+const TIMING_ORDER: Record<EarningsCall["timing"], number> = { bmo: 0, amc: 1 };
+
+/**
+ * Groups calls by the day the company reports, not the session that grades them: an after-close
+ * report on Nov 12 is graded on Nov 13 but belongs to Nov 12. Days run in `order`; inside a day
+ * pre-market reports come before after-close ones, and the incoming order breaks ties.
+ */
+export function groupByReport(calls: EarningsCall[], order: "asc" | "desc"): ReportGroup[] {
+  const sign = order === "asc" ? 1 : -1;
+  const sorted = calls
+    .map((call, index) => ({ call, index }))
+    .sort(
+      (a, b) =>
+        sign * a.call.reportDate.localeCompare(b.call.reportDate) ||
+        TIMING_ORDER[a.call.timing] - TIMING_ORDER[b.call.timing] ||
+        a.index - b.index,
+    );
+  const groups: ReportGroup[] = [];
+  for (const { call } of sorted) {
     const last = groups.at(-1);
-    if (last && last.session === call.session) last.calls.push(call);
-    else groups.push({ session: call.session, calls: [call] });
+    if (last && last.reportDate === call.reportDate) last.calls.push(call);
+    else groups.push({ reportDate: call.reportDate, calls: [call] });
   }
   return groups;
 }
 
-export const callHref = (id: string) => `/call/${encodeURIComponent(id)}`;
+/** Latest lock time among the calls, or null for none. */
+export function latestLock(calls: EarningsCall[]): string | null {
+  let latest: string | null = null;
+  for (const call of calls) {
+    if (latest === null || Date.parse(call.publishedAt) > Date.parse(latest)) latest = call.publishedAt;
+  }
+  return latest;
+}
+
+/** "Nov 11 20:12 ET", or a range when the instants fall on different minutes. */
+export function lockLabel(instants: string[]): string | null {
+  const times = instants.map((instant) => Date.parse(instant)).sort((a, b) => a - b);
+  if (times.length === 0) return null;
+  const first = new Date(times[0]);
+  const last = new Date(times[times.length - 1]);
+  const start = `${etShortDate.format(first)} ${etTime.format(first)}`;
+  const sameDay = etShortDate.format(first) === etShortDate.format(last);
+  const end = sameDay ? etTime.format(last) : `${etShortDate.format(last)} ${etTime.format(last)}`;
+  return start === `${etShortDate.format(last)} ${etTime.format(last)}` ? `${start} ET` : `${start}–${end} ET`;
+}
+
+const ARROW: Record<EarningsCall["direction"], string> = { up: "▲", down: "▼" };
+
+/** Short text form of a call for titles and link previews, e.g. "CSCO ▲ UP · UNDER ±4.7%". */
+export function callTitle(call: EarningsCall): string {
+  const parts = [`${call.ticker} ${ARROW[call.direction]} ${call.direction.toUpperCase()}`];
+  if (call.overUnder && call.line.value !== null) {
+    parts.push(`${call.overUnder.toUpperCase()} ${lineLabel(call.line.value)}`);
+  }
+  if (call.status === "void") parts.push("Void");
+  if (call.status === "graded" && call.grade) {
+    const legs = [call.grade.direction, call.grade.overUnder].filter((leg) => leg !== null);
+    parts.push(`${movePct(call.grade.movePct)} ${legs.map((leg) => RESULT_LETTER[leg]).join("/")}`);
+  }
+  return parts.join(" · ");
+}
+
+/** Call ids are `YYYY-MM-DD:TICKER`; ':' is legal in a path segment, so the id goes in as is. */
+export const callHref = (id: string) => `/call/${id}`;

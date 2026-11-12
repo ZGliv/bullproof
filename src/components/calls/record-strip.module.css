@@ -55,6 +55,8 @@
   padding: 2px 0;
 }
 
+/* Results differ by shape as well as colour: win is solid, loss is a ring, push a bar,
+   void a round dot, and a missing leg an empty outline. */
 .dot {
   width: 8px;
   height: 8px;
@@ -66,14 +68,17 @@
 }
 
 .loss {
-  background: var(--bp-down);
+  border: 2px solid var(--bp-down);
 }
 
 .push {
+  height: 2px;
+  margin: 3px 0;
   background: var(--bp-muted);
 }
 
 .void {
+  border-radius: 50%;
   background: var(--bp-amber);
 }
 

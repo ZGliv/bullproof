@@ -108,7 +108,7 @@ export type PacketRefusal =
   | "not-8k-filer"
   | "already-reported" // newest earnings release was accepted after asOf or within the last 45 days
   | "no-press-release" // no EX-99 exhibit that reads as an earnings release
-  | "sec-unavailable";
+  | "stale-release"; // newest release is old or not about the newest 10-Q/10-K (results moved off Item 2.02)
 
 /** A quoted piece of evidence behind one side of a call. `quote` appears verbatim in the source text. */
 export interface EvidencePoint {
@@ -226,7 +226,10 @@ export interface BoardResponse {
   };
 }
 
-/** Response of the Worker's GET /earnings/ledger (every call, newest first). */
+/**
+ * Response of the Worker's GET /earnings/ledger[?season=2026 Q4]: one season's calls (default the
+ * current season) plus every call still open, newest first.
+ */
 export interface LedgerResponse {
   generatedAt: IsoInstant;
   calls: EarningsCall[];

@@ -6,7 +6,7 @@ const RESULT_NAME: Record<LegResult | "void", string> = { win: "Win", loss: "Los
 
 /** `null` is a leg that does not exist (no line); `"pending"` is a leg not graded yet. */
 export function ResultMark({ result, leg }: { result: LegResult | "void" | "pending" | null; leg: string }) {
-  if (result === "pending") return <span className={s.mark} aria-hidden="true" />;
+  if (result === "pending") return <span className={`${s.mark} ${s.pending}`} aria-label={`${leg} pending`} />;
   if (result === null) return <span className={`${s.mark} ${s.none}`} aria-label={`${leg} none`} />;
   return (
     <span
@@ -48,30 +48,40 @@ export function Pips({ value }: { value: number }) {
   );
 }
 
-/** Signed bars of the last reactions, oldest on the left, scaled to the largest move in the row. */
-export function ReactionStrip({ reactions }: { reactions: Reaction[] }) {
-  const width = 8 * 9 - 3;
-  const height = 22;
-  const mid = height / 2;
-  const max = Math.max(...reactions.map((r) => Math.abs(r.movePct)), 0.01);
-  const offset = (8 - reactions.length) * 9;
+const STRIP = { slots: 8, pitch: 9, bar: 6, height: 24 };
+
+/**
+ * Signed bars of the last reactions, oldest on the left, with the ±line as two dotted hairlines.
+ * Each strip is scaled to its own largest move or line, whichever is bigger, so every bar reads
+ * against its own line.
+ */
+export function ReactionStrip({ reactions, line }: { reactions: Reaction[]; line: number | null }) {
+  const width = STRIP.slots * STRIP.pitch - (STRIP.pitch - STRIP.bar);
+  const mid = STRIP.height / 2;
+  const max = Math.max(...reactions.map((r) => Math.abs(r.movePct)), line ?? 0, 0.01);
+  const scale = (value: number) => (Math.abs(value) / max) * (mid - 1);
+  const offset = (STRIP.slots - reactions.length) * STRIP.pitch;
   return (
     <svg
       className={s.strip}
       width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      role="img"
-      aria-label={reactions.length ? `Last ${reactions.length} reactions` : "No past reactions"}
+      height={STRIP.height}
+      viewBox={`0 0 ${width} ${STRIP.height}`}
+      aria-hidden="true"
     >
       <line x1={0} x2={width} y1={mid} y2={mid} className={s.axis} />
+      {line !== null
+        ? [mid - scale(line), mid + scale(line)].map((y) => (
+            <line key={y} x1={0} x2={width} y1={y} y2={y} className={s.lineTick} />
+          ))
+        : null}
       {reactions.map((r, i) => {
-        const h = Math.max(1, (Math.abs(r.movePct) / max) * (mid - 1));
+        const h = Math.max(1, scale(r.movePct));
         return (
           <rect
             key={r.session}
-            x={offset + i * 9}
-            width={6}
+            x={offset + i * STRIP.pitch}
+            width={STRIP.bar}
             y={r.movePct >= 0 ? mid - h : mid}
             height={h}
             className={r.movePct >= 0 ? s.barUp : s.barDown}

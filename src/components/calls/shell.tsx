@@ -45,8 +45,10 @@ export function Shell({
             </a>
           </nav>
           {lockedAt ? (
-            <time className={s.locked} dateTime={lockedAt} title="Slate locked">
-              <span className={s.lockedLabel}>Locked</span> {etDay(lockedAt)} {etClock(lockedAt)}
+            <time className={s.locked} dateTime={lockedAt}>
+              <span className={s.lockedLabel}>Locked</span>{" "}
+              <span className={s.lockedDay}>{etDay(lockedAt)} </span>
+              {etClock(lockedAt)}
             </time>
           ) : null}
         </div>

@@ -59,9 +59,10 @@ const PERIOD = anyWord([
 /** Words that make a period-and-verb headline about financials rather than, say, a trial. */
 const FINANCIAL = /\b(?:results|earnings|eps|revenues?|sales|profit|loss|income)\b/i;
 
-/** Benzinga-style results flash: "Q3 EPS $0.18 Beats …", "Q3 Adj. EPS $(0.23) Misses …". */
+/** Benzinga-style results flash: "Q3 EPS $0.18 Beats …", "Q3 2026 Adj. EPS $(0.23) Misses …". */
 const RESULTS_FLASH = new RegExp(
   "\\bq[1-4]\\s+" +
+    "(?:(?:fy ?)?20\\d\\d\\s+|fy ?\\d\\d\\s+)?" +
     "(?:(?:adj\\.?|adjusted|gaap|non-gaap|core)\\s+)?" +
     "(?:eps|sales|revenues?|net (?:income|loss)|earnings|loss)\\s+" +
     "(?:of\\s+)?(?:r?\\$|\\(|-?\\d)",
@@ -103,4 +104,52 @@ export function firstResultsHeadline(
     if (!first || ms < first.ms) first = { at: item.createdAt, headline: item.headline, ms };
   }
   return first && { at: first.at, headline: first.headline };
+}
+
+/** Words that can sit in a company's name in a headline without being part of its proper name. */
+const CORPORATE_WORDS = new Set([
+  "the", "and", "inc", "incorporated", "corp", "corporation", "co", "company", "companies", "ltd", "limited",
+  "plc", "llc", "lp", "nv", "sa", "ag", "se", "holding", "holdings", "group", "class", "a", "b", "c",
+  "common", "ordinary", "stock", "shares", "ads", "adr", "nyse", "nasdaq",
+]);
+
+/** The word that opens a results statement right after the company's name. */
+const STATEMENT_START = new RegExp(
+  "^(?:reports?|reported|announces?|announced|posts?|posted|delivers?|releases?|unveils?|beats?|misses?|tops?" +
+    "|q[1-4]|fy\\d*|fiscal|first|second|third|fourth|1st|2nd|3rd|4th|full|three|six|nine|twelve" +
+    "|results|earnings|eps|adj|adjusted|gaap|non|core|net|revenues?|sales|profit)$",
+);
+
+/** Clause starts: the headline start and every point after ;  :  ,  or a spaced dash. */
+const CLAUSE_BREAK = /[;:,]|\s[-–—]\s/g;
+
+function words(text: string): string[] {
+  return text
+    .toLowerCase()
+    .replace(/['’]s\b/g, "")
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+
+/**
+ * True when the company is the subject of the headline: some clause opens with the company's
+ * name or ticker (plus corporate words such as "Inc." or "Class A") and the next word starts the
+ * results statement. Alpaca tags a story with every ticker it mentions, so "Cisco Rival Arista
+ * Networks Reports …" or "San Francisco-Based Fastly Reports …" must not count for Cisco.
+ */
+export function isAboutCompany(headline: string, ticker: string, name: string): boolean {
+  const symbol = ticker.toLowerCase();
+  const nameWords = new Set(words(name));
+  const starts = [0, ...[...headline.matchAll(CLAUSE_BREAK)].map((match) => match.index + match[0].length)];
+  for (const start of starts) {
+    const tokens = words(headline.slice(start));
+    let i = 0;
+    let named = false;
+    while (i < tokens.length && (tokens[i] === symbol || nameWords.has(tokens[i]) || CORPORATE_WORDS.has(tokens[i]))) {
+      named ||= tokens[i] === symbol || !CORPORATE_WORDS.has(tokens[i]);
+      i++;
+    }
+    if (named && i < tokens.length && STATEMENT_START.test(tokens[i])) return true;
+  }
+  return false;
 }

@@ -37,8 +37,11 @@ const pending = new Map<string, Promise<Cached<unknown>>>();
 /** In-process gate: no more than three SEC request starts / second. Shared fleet coordination is not provided. */
 let gate: Promise<void> = Promise.resolve();
 let lastRequest = 0;
+/** After SEC answers 403 or 429 (rate limit), no SEC requests start until this time. */
+let coolUntil = 0;
 /** Gated SEC GET with the app's User-Agent and timeout. Callers read the body and handle non-OK statuses. */
 export async function secResponse(url: string, accept = "application/json"): Promise<Response> {
+  if (Date.now() < coolUntil) throw new ResearchError("SEC is rate limiting requests. Try again later.");
   const turn = gate.then(async () => {
     const wait = Math.max(0, 350 - (Date.now() - lastRequest));
     if (wait) await new Promise((resolve) => setTimeout(resolve, wait));
@@ -46,11 +49,14 @@ export async function secResponse(url: string, accept = "application/json"): Pro
   });
   gate = turn.catch(() => {});
   await turn;
-  return fetch(url, {
+  if (Date.now() < coolUntil) throw new ResearchError("SEC is rate limiting requests. Try again later.");
+  const response = await fetch(url, {
     headers: { "User-Agent": USER_AGENT, Accept: accept },
     signal: AbortSignal.timeout(12_000),
     cache: "no-store",
   });
+  if (response.status === 403 || response.status === 429) coolUntil = Date.now() + 10 * 60_000;
+  return response;
 }
 async function secJson<T>(url: string): Promise<T> {
   try {
@@ -73,13 +79,17 @@ export async function cached<T>(
   ttl = TTL,
 ): Promise<Cached<T>> {
   const existing = cache.get(key);
-  if (existing && Date.now() - existing.time < ttl)
+  if (existing && Date.now() - existing.time < ttl) {
+    // Re-insert so eviction drops the least recently used entry, not a hot one like "universe".
+    cache.delete(key);
+    cache.set(key, existing);
     return {
       value: existing.value as T,
       fetchedAt: existing.fetchedAt,
       stale: false,
       warnings: [],
     };
+  }
   const underway = pending.get(key);
   if (underway) return underway as Promise<Cached<T>>;
   const work = (async (): Promise<Cached<T>> => {

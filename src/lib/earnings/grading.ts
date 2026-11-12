@@ -4,10 +4,11 @@ import type {
   Grade,
   IsoInstant,
   LegResult,
+  SessionDate,
   TradingDay,
   VoidReason,
 } from "./types";
-import { calendarCovers, nextSession, previousSession, releaseSession, sessionCloseMs } from "./time";
+import { calendarCovers, etParts, nextSession, previousSession, releaseSession, sessionCloseMs } from "./time";
 
 /** Grading waits this long after the close so the consolidated closing print has settled. */
 const SETTLE_MS = 20 * 60_000;
@@ -33,10 +34,16 @@ export type GradeOutcome =
   | { status: "pending" };
 
 export interface GradeInput {
-  call: Pick<EarningsCall, "session" | "publishedAt" | "direction" | "overUnder" | "line">;
+  call: Pick<EarningsCall, "session" | "reportDate" | "publishedAt" | "direction" | "overUnder" | "line">;
   calendar: TradingDay[];
   bars: DailyBar[];
+  /** Earliest time-stamped results evidence: an 8-K acceptance or a results headline. */
   releaseAt: IsoInstant | null;
+  /**
+   * The release day when it is known only by date: the "date of report" of an 8-K accepted on a
+   * later day (issuers such as HELE and KRUS publish the press release days before the 8-K).
+   */
+  releaseDate: SessionDate | null;
   releaseSource: "8-K" | "news" | null;
   now: IsoInstant;
 }
@@ -56,6 +63,16 @@ function settled(calendar: TradingDay[], session: string | null, nowMs: number):
   if (session === null) return false;
   const close = sessionCloseMs(calendar, session);
   return close !== null && nowMs >= close + SETTLE_MS;
+}
+
+/** True once the call session has closed and its closing print has settled. */
+export function sessionSettled(calendar: TradingDay[], session: SessionDate, now: IsoInstant): boolean {
+  return settled(calendar, session, Date.parse(now));
+}
+
+/** True once a call with no results evidence would be voided as no-release: the next session has settled. */
+export function releaseDeadlinePassed(calendar: TradingDay[], session: SessionDate, now: IsoInstant): boolean {
+  return settled(calendar, nextSession(calendar, session), Date.parse(now));
 }
 
 /** Same scale for both sides: hundredths of a percent as integers, so 3.1 vs 3.10 compare exactly. */
@@ -79,18 +96,23 @@ function overUnderResult(
 
 /**
  * Decides one call. Rules apply in order:
- * 1. results public before the lock → void pre-release;
+ * 1. results public before the lock → void pre-release (a release known only by date counts when
+ *    that date is on or before the lock's New York date);
  * 2. call session not yet closed (+20 min) → pending;
  * 3. no results evidence: pending through the next session's close, then void no-release;
- * 4. results during regular hours → void intraday-release; in another session → void session-mismatch;
+ * 4. results during regular hours → void intraday-release; in another session → void session-mismatch.
+ *    A release known only by date is in the session when it falls on the calendar's report date;
+ *    the time-of-day slot is then the calendar's;
  * 5. bars missing: pending until 3 later sessions have closed, then void missing-bar;
  * 6. grade both legs on the close-to-close move.
  */
 export function gradeCall(input: GradeInput): GradeOutcome {
-  const { call, calendar, bars, releaseAt, releaseSource } = input;
+  const { call, calendar, bars, releaseAt, releaseDate, releaseSource } = input;
   const nowMs = Date.parse(input.now);
 
   if (releaseAt !== null && Date.parse(releaseAt) < Date.parse(call.publishedAt)) return voided("pre-release");
+  // Without a time of day the lock's own date counts as "before": the void errs on the safe side.
+  if (releaseDate !== null && releaseDate <= etParts(call.publishedAt).date) return voided("pre-release");
 
   if (sessionCloseMs(calendar, call.session) === null) {
     // A call session the calendar positively knows is closed can never be graded.
@@ -98,14 +120,17 @@ export function gradeCall(input: GradeInput): GradeOutcome {
   }
   if (!settled(calendar, call.session, nowMs)) return PENDING;
 
-  if (releaseAt === null) {
+  // A time stamp wins unless a late 8-K's date of report shows the release came on an earlier day.
+  if (releaseAt !== null && (releaseDate === null || etParts(releaseAt).date <= releaseDate)) {
+    const release = releaseSession(calendar, releaseAt);
+    if (!release) return PENDING;
+    if (release.timing === "during") return voided("intraday-release");
+    if (release.session !== call.session) return voided("session-mismatch");
+  } else if (releaseDate !== null) {
+    if (releaseDate !== call.reportDate) return voided("session-mismatch");
+  } else {
     return settled(calendar, nextSession(calendar, call.session), nowMs) ? voided("no-release") : PENDING;
   }
-
-  const release = releaseSession(calendar, releaseAt);
-  if (!release) return PENDING;
-  if (release.timing === "during") return voided("intraday-release");
-  if (release.session !== call.session) return voided("session-mismatch");
 
   const baseDate = previousSession(calendar, call.session);
   const result = bars.find((bar) => bar.date === call.session);

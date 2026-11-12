@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { firstResultsHeadline, isResultsHeadline } from "./headlines";
+import { firstResultsHeadline, isAboutCompany, isResultsHeadline } from "./headlines";
 
 // Real Alpaca news headlines pulled on 2026-11-11.
 const RESULTS = [
@@ -117,5 +117,67 @@ describe("firstResultsHeadline", () => {
   it("returns null when nothing qualifies", () => {
     expect(firstResultsHeadline([], "2026-11-10T21:00:00Z")).toBeNull();
     expect(firstResultsHeadline([{ createdAt: "bad", headline: ctva[1].headline }], "2026-11-10T21:00:00Z")).toBeNull();
+  });
+});
+
+describe("isResultsHeadline: dated flashes", () => {
+  it("accepts a flash that names the year, but not guidance that does", () => {
+    expect(isResultsHeadline("Acme Q3 2026 EPS $1.10 Beats $1.00 Estimate")).toBe(true);
+    expect(isResultsHeadline("Acme Q3 FY26 Adj. EPS $1.10 Beats $1.00 Estimate")).toBe(true);
+    expect(isResultsHeadline("Acme Sees Q4 2026 EPS $1.10-$1.20")).toBe(false);
+  });
+});
+
+describe("isAboutCompany", () => {
+  // Real headlines (Alpaca, 2026-11-11) with the issuer's Alpha Vantage ticker and name.
+  const OWN: [string, string, string][] = [
+    ["Corteva Reports Third-Quarter 2026 Results and Updates Full-Year Outlook", "CTVA", "CORTEVA INCORPORATED"],
+    ["Firefly Neuroscience Reports Third Quarter 2026 Financial Results", "AIFF", "FIREFLY NEUROSCIENCE INCORPORATED"],
+    [
+      "Applied Aerospace & Defense, Inc. Reports Q3 2026 Financial Results",
+      "AADX",
+      "APPLIED AEROSPACE & DEFENSE INCORPORATED",
+    ],
+    ["AEVEX Corp. Announces Financial Results for Third Quarter 2026", "AVEX", "AEVEX CORPORATION"],
+    [
+      "Anteris Technologies Reports Financial Results for the Third Quarter of 2026",
+      "AVR",
+      "ANTERIS TECHNOLOGIES GLOBAL CORPORATION",
+    ],
+    ["CAE Inc. Reports Second Quarter Fiscal 2027 Results and Raises Full-Year Outlook", "CAE", "CAE INCORPORATED"],
+    ["EZCORP, Inc. Reports Fourth Quarter and Full Year 2026 Financial Results", "EZPW", "EZCORP INCORPORATED"],
+    ["iBio, Inc. Reports Financial Results for First Quarter of Fiscal Year 2027", "IBIO", "IBIO INCORPORATED"],
+    ["Costco Wholesale Reports Strong Q4: Revenue, Earnings Beat Estimates", "COST", "COSTCO WHOLESALE CORPORATION"],
+    ["Corteva Q3 Adj. EPS $0.06 Misses $0.10 Estimate, Sales $1.590B Miss $1.764B Estimate", "CTVA", "CORTEVA INCORPORATED"],
+    ["Alvotech Q3 EPS $(0.23) Misses $(0.07) Estimate, Sales $111.600M Miss $119.037M Estimate", "ALVO", "ALVOTECH"],
+    [
+      "Reported Earlier, CitroTech Inc. Common Stock Q3 EPS $(0.10) Beats $(0.18) Estimate",
+      "CITR",
+      "CITROTECH INCORPORATED",
+    ],
+    ["CORRECTION: Teekay Q3 EPS $0.68 Up From $0.34 YoY, Sales $368.925M Up From $228.485M YoY", "TK", "TEEKAY CORPORATION LIMITED"],
+    [
+      "Cisco Systems Q4 Adj. EPS $1.22 Beats $1.17 Estimate, Sales $17.252B Beat $16.823B Estimate",
+      "CSCO",
+      "CISCO SYSTEMS INCORPORATED",
+    ],
+  ];
+  it.each(OWN)("%s is about %s", (headline, ticker, name) => {
+    expect(isAboutCompany(headline, ticker, name)).toBe(true);
+  });
+
+  it("finds the subject after a market-wrap clause", () => {
+    expect(isAboutCompany("Gold Down 2%; TransDigm Group Posts Upbeat Earnings", "TDG", "TRANSDIGM GROUP INCORPORATED")).toBe(true);
+    expect(isAboutCompany("Gold Down 2%; TransDigm Group Posts Upbeat Earnings", "GLD", "SPDR GOLD TRUST")).toBe(false);
+  });
+
+  it("rejects other companies' results that mention this company", () => {
+    const cisco = (headline: string) => isAboutCompany(headline, "CSCO", "CISCO SYSTEMS INCORPORATED");
+    expect(cisco("Cisco Rival Arista Networks Reports Second Quarter 2026 Results")).toBe(false);
+    expect(cisco("Arista Networks Posts Upbeat Q2 Results, Cisco Shares Slip")).toBe(false);
+    expect(cisco("San Francisco-Based Fastly Reports Third Quarter 2026 Results")).toBe(false);
+    expect(isAboutCompany("Nvidia Supplier TSMC Reports Third Quarter 2026 Results", "NVDA", "NVIDIA CORPORATION")).toBe(false);
+    // "eli" inside "delivers" is not Eli Lilly.
+    expect(isAboutCompany("Novo Nordisk Delivers Q3 Results", "LLY", "ELI LILLY AND COMPANY")).toBe(false);
   });
 });

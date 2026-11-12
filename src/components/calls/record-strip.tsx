@@ -15,6 +15,8 @@ function Leg({ label, leg }: { label: string; leg: LegRecord }) {
     <span className={r.item}>
       <span className={r.label}>{label}</span>
       <span className={r.value}>{recordLine(leg.win, leg.loss, leg.push)}</span>
+      <span className={r.label}>N</span>
+      <span className={r.sub}>{leg.n}</span>
       {leg.pct !== null ? <span className={r.value}>{leg.pct.toFixed(1)}%</span> : null}
       {leg.interval ? (
         <span className={r.sub}>
@@ -35,7 +37,6 @@ function Base({ leg }: { leg: LegRecord }) {
 }
 
 export function RecordStrip({ record }: { record: SeasonRecord }) {
-  const graded = record.direction.win + record.direction.loss + record.direction.push;
   // `last` is newest first; draw oldest on the left so the row reads forward in time.
   const marks = [...record.last].reverse();
   return (
@@ -43,10 +44,6 @@ export function RecordStrip({ record }: { record: SeasonRecord }) {
       <span className={`${r.item} ${r.season}`}>{record.season}</span>
       <Leg label="Dir" leg={record.direction} />
       <Leg label="O/U" leg={record.overUnder} />
-      <span className={r.item}>
-        <span className={r.label}>N</span>
-        <span className={r.value}>{graded}</span>
-      </span>
       {record.voids ? (
         <span className={r.item}>
           <span className={r.label}>Void</span>
