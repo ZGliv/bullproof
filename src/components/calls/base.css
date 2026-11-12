@@ -1,0 +1,34 @@
+/* Global tokens and the minimal reset for every page. Component styles live in CSS Modules. */
+:root {
+  --bp-bg: #0b1218;
+  --bp-surface: #101922;
+  --bp-bar: #14212b;
+  --bp-line: #293640;
+  --bp-ink: #dae3e9;
+  --bp-muted: #8c9da9;
+  --bp-accent: #19c99d;
+  --bp-on-accent: #05251d;
+  --bp-up: #24cfa0;
+  --bp-down: #f16f7c;
+  --bp-amber: #f6bc70;
+  --bp-sans: var(--font-geist-sans), "IBM Plex Sans", system-ui, sans-serif;
+  --bp-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bp-bg);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bp-bg);
+  color: var(--bp-ink);
+}

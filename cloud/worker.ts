@@ -2,6 +2,7 @@ import {syncRequest} from './sync';
 import {catalystResponse} from './catalysts';
 import {companyEvidence,selectCandidates,eligibility,strategyRules,type StrategyId} from '../src/lib/paper/selection';
 import {marketResponse} from './market';
+import {GRADE_CRON,PUBLISH_CRON,earningsRoute,gradeDue,publishSlate} from './earnings';
 import {account,execute,mark,policies,validateProposal} from '../src/lib/paper/engine';
 import type {Decision,Evidence,Ledger,Quote} from '../src/lib/paper/engine';
 import {clockIsFresh,marketDay} from '../src/lib/paper/schedule';
@@ -9,7 +10,7 @@ import type {DiscoveryResponse} from '../src/lib/live-research-types';
 // Narrow structural interfaces keep the app independent of a second framework runtime.
 interface Statement {bind(...values:unknown[]):Statement;first<T>():Promise<T|null>;all<T>():Promise<{results:T[]}>;run():Promise<{meta:{changes:number}}>}
 interface Database {prepare(sql:string):Statement;batch(statements:Statement[]):Promise<unknown[]>}
-interface Env {DB:Database;AI:{run(model:string,input:unknown):Promise<unknown>};APCA_API_KEY_ID:string;APCA_API_SECRET_KEY:string;ADMIN_TOKEN:string;RESEARCH_URL:string;ENABLED:string}
+interface Env {DB:Database;AI:{run(model:string,input:unknown):Promise<unknown>};APCA_API_KEY_ID:string;APCA_API_SECRET_KEY:string;ADMIN_TOKEN:string;RESEARCH_URL:string;ENABLED:string;ALPHAVANTAGE_API_KEY?:string}
 interface State {ledger:Ledger;day:string;evidence:Evidence[];evidenceVersion?:string;aiAttempts:number;updatedAt:string;connected:boolean;messages:string[];lastCheckAt:string;marketOpen:boolean;nextOpen:string;lastOutcome:string;model:string;lastTrigger?:'scheduled'|'manual'|'research';lastScheduledAt?:string;lastScheduledOutcome?:string}
 const MODEL='@cf/qwen/qwen3-30b-a3b-fp8',VERSION='cloud-v2';
 const MAX_AI_ATTEMPTS=6;
@@ -81,16 +82,24 @@ const worker = {
   try{
    if(path==='/catalysts'&&request.method==='GET')return await catalystResponse(request,env);
    if(path==='/market'&&request.method==='GET')return await marketResponse(request,env);
+   if(path.startsWith('/earnings/')){const earnings=await earningsRoute(request,env);if(earnings)return earnings;}
    if(path==='/snapshot'&&request.method==='GET'){const state=await read(env);return state?json(publicSnapshot(state,env.ENABLED==='true')):json({error:'Runner is not initialized'},503);}
    if(!path.startsWith('/admin/')||!await authorized(request,env))return json({error:'Not found'},404);
    if(path==='/admin/import'&&request.method==='POST'){const token=await acquire(env);if(!token)return json({error:'Runner busy'},409);try{if(await read(env))return json({error:'Import is one-time; existing history cannot be overwritten'},409);const input=await request.json() as Ledger & {updatedAt?:string};if(input.version!==1||!['decisions','fills','marks','attempts'].every(k=>Array.isArray(input[k as keyof Ledger])))return json({error:'Invalid migration ledger'},400);const now=new Date().toISOString();await persist(env,{ledger:{version:1,startedAt:input.startedAt,decisions:input.decisions,fills:input.fills,marks:input.marks,attempts:input.attempts},day:marketDay(new Date()),evidence:[],aiAttempts:0,updatedAt:input.updatedAt||now,connected:false,messages:[],lastCheckAt:now,marketOpen:false,nextOpen:'',lastOutcome:'History imported; hosted verification pending.',model:MODEL},token);return json({imported:true,decisions:input.decisions.length,fills:input.fills.length});}finally{await release(env,token);}}
    if(path==='/admin/research'&&request.method==='POST'){const token=await acquire(env);if(!token)return json({error:'Runner busy'},409);try{const state=await read(env);if(!state)return json({error:'Import portfolio history first'},409);const day=marketDay(new Date());if(state.day!==day){state.day=day;state.evidence=[];state.aiAttempts=0;}state.model=MODEL;await research(env,state,token);state.lastTrigger='research';state.lastOutcome='Hosted research verified; no trade execution requested.';state.lastCheckAt=new Date().toISOString();state.updatedAt=state.lastCheckAt;await persist(env,state,token);return json({researched:true,decisions:state.ledger.decisions.filter(d=>d.day===day&&d.version===VERSION).length,fills:state.ledger.fills.length});}finally{await release(env,token);}}
    if(path==='/admin/tick'&&request.method==='POST')return json(await tick(env));
+   if(path==='/admin/earnings/publish'&&request.method==='POST')return json(await publishSlate(env));
+   if(path==='/admin/earnings/grade'&&request.method==='POST')return json(await gradeDue(env));
    if(path==='/admin/probe'&&request.method==='POST'){const r=await env.AI.run(MODEL,{max_tokens:64,messages:[{role:'user',content:'/no_think Reply with just the word READY.'}]});return json({model:MODEL,responded:JSON.stringify(r).includes('READY')});}
    return json({error:'Not found'},404);
   }catch(e){return json({error:e instanceof Error?e.message:'Runner unavailable'},503);}
  },
- async scheduled(_controller:unknown,env:Env){await tick(env,'scheduled');}
+ async scheduled(controller:{cron?:string},env:Env){
+  // Earnings jobs catch their own errors; the portfolio tick keeps its rethrowing behaviour.
+  if(controller?.cron===PUBLISH_CRON){await publishSlate(env);return;}
+  if(controller?.cron===GRADE_CRON){await gradeDue(env);return;}
+  await tick(env,'scheduled');
+ }
 };
 
 export default worker;

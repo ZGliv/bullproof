@@ -1,0 +1,235 @@
+.section {
+  margin-top: 24px;
+}
+
+.title {
+  margin: 0 0 4px;
+  color: var(--bp-ink);
+  font-family: var(--bp-sans);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+
+.group {
+  border-top: 1px solid var(--bp-line);
+}
+
+.groupHead {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 8px 4px;
+  color: var(--bp-ink);
+  font-family: var(--bp-mono);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0;
+}
+
+/* Desktop: one grid row per call. The id/meta/call/outcome wrappers use display: contents so
+   their children land in the row's columns; on narrow screens they become two stacked lines. */
+.row {
+  display: grid;
+  align-items: center;
+  column-gap: 12px;
+  min-height: 40px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--bp-line);
+  color: var(--bp-ink);
+  font-size: 13px;
+}
+
+.slate {
+  /* The status column spans the same 140px as move + two marks, so both tables share one grid. */
+  grid-template-columns: 56px minmax(0, 1fr) 36px 64px 64px 69px 72px 48px 39px 140px;
+}
+
+.results {
+  grid-template-columns: 56px minmax(0, 1fr) 36px 64px 64px 69px 72px 48px 39px 76px 20px 20px;
+}
+
+a.row {
+  position: relative;
+  transition: background-color 80ms linear;
+}
+
+a.row:hover {
+  background: var(--bp-surface);
+}
+
+a.row.row:focus-visible {
+  outline: 1px solid var(--bp-accent);
+  outline-offset: -1px;
+  background: var(--bp-surface);
+}
+
+.group > a.row:last-child {
+  border-bottom-color: transparent;
+}
+
+.head {
+  min-height: 28px;
+  border-bottom: 0;
+  color: var(--bp-muted);
+  font-size: 12px;
+}
+
+.id,
+.meta,
+.call,
+.outcome {
+  display: contents;
+}
+
+.ticker {
+  font-family: var(--bp-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--bp-ink);
+}
+
+.name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--bp-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timing,
+.num,
+.status,
+.move {
+  font-family: var(--bp-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.timing {
+  color: var(--bp-muted);
+  font-size: 12px;
+}
+
+.num {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
+}
+
+.cap,
+.line {
+  color: var(--bp-ink);
+}
+
+.strip {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.status {
+  color: var(--bp-muted);
+  font-size: 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.statusLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.move {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.up {
+  color: var(--bp-up);
+}
+
+.down {
+  color: var(--bp-down);
+}
+
+.pending {
+  color: var(--bp-muted);
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 860px) {
+  .head {
+    display: none;
+  }
+
+  .row.slate,
+  .row.results {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "id call"
+      "meta outcome";
+    row-gap: 4px;
+    min-height: 0;
+    padding: 8px;
+  }
+
+  .id,
+  .meta,
+  .call,
+  .outcome {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .id {
+    grid-area: id;
+    gap: 8px;
+  }
+
+  .meta {
+    grid-area: meta;
+    gap: 12px;
+  }
+
+  .call {
+    grid-area: call;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .outcome {
+    grid-area: outcome;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  .cap,
+  .line {
+    color: var(--bp-muted);
+    font-size: 12px;
+  }
+
+  /* Fixed width so the reaction strips line up from row to row. */
+  .line {
+    min-width: 6.5ch;
+  }
+
+  .move {
+    margin-right: 4px;
+  }
+}
+
+@media (max-width: 420px) {
+  .cap {
+    display: none;
+  }
+}

@@ -1,0 +1,101 @@
+.section {
+  padding-top: 16px;
+}
+
+.scroll {
+  overflow-x: auto;
+}
+
+.table {
+  width: auto;
+  min-width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.table th,
+.table td {
+  height: 36px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--bp-line);
+  font-family: var(--bp-mono);
+  font-size: 14px;
+  font-weight: 400;
+  text-align: right;
+  white-space: nowrap;
+  color: var(--bp-muted);
+  background: transparent;
+}
+
+.table thead th {
+  height: 28px;
+  font-family: var(--bp-sans);
+  font-size: 12px;
+  color: var(--bp-muted);
+}
+
+.table th:first-child {
+  padding-left: 8px;
+  text-align: left;
+}
+
+.table tbody th {
+  font-family: var(--bp-sans);
+  font-size: 13px;
+  color: var(--bp-ink);
+}
+
+.table thead .season {
+  font-family: var(--bp-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bp-ink);
+}
+
+.table .strong {
+  color: var(--bp-ink);
+  font-weight: 600;
+}
+
+.table .base {
+  padding-left: 24px;
+  font-family: var(--bp-sans);
+  font-size: 12px;
+  text-align: left;
+}
+
+.table td:last-child,
+.table th:last-child {
+  width: 100%;
+  text-align: left;
+}
+
+.voids {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin: 0;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.voidLabel {
+  color: var(--bp-muted);
+}
+
+.voidValue {
+  color: var(--bp-ink);
+  font-family: var(--bp-mono);
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .table th,
+  .table td {
+    padding: 0 6px;
+  }
+
+  .table .base {
+    padding-left: 12px;
+  }
+}

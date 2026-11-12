@@ -342,7 +342,7 @@ export function ResearchApp({ initialTicker, initialWatchlist=false }: { initial
           window.history.pushState(
             null,
             "",
-            `/?ticker=${encodeURIComponent(c.ticker)}`,
+            `/research?ticker=${encodeURIComponent(c.ticker)}`,
           );
         window.scrollTo({ top: 0, behavior: "instant" });
         requestAnimationFrame(() =>
@@ -365,7 +365,7 @@ export function ResearchApp({ initialTicker, initialWatchlist=false }: { initial
     setView("atlas");
     setSavedOnly(saved);
     setQuery("");
-    if (push) window.history.pushState(null, "", saved ? "/?view=watchlist" : "/");
+    if (push) window.history.pushState(null, "", saved ? "/research?view=watchlist" : "/research");
     window.scrollTo({ top: 0, behavior: "instant" });
     requestAnimationFrame(() =>
       mainHeading.current?.focus({ preventScroll: true }),
@@ -606,7 +606,7 @@ export function ResearchApp({ initialTicker, initialWatchlist=false }: { initial
                 window.history.pushState(
                   null,
                   "",
-                  `/?ticker=${encodeURIComponent(current.ticker)}`,
+                  `/research?ticker=${encodeURIComponent(current.ticker)}`,
                 );
               }}
             >
@@ -644,7 +644,7 @@ export function ResearchApp({ initialTicker, initialWatchlist=false }: { initial
     <div
       className={`research-app terminal-workspace ${view === "atlas" ? "r-atlas" : "r-journal"}`}
     >
-      <AppHeader active={savedOnly?'watchlist':'discover'} count={shelf.watchlist.length} onDiscover={()=>goAtlas()} onWatchlist={()=>goAtlas(true)}>
+      <AppHeader active={savedOnly?'watchlist':'discover'} onDiscover={()=>goAtlas()}>
         {searchView}
         <button
           className="r-refresh"

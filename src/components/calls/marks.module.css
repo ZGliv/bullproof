@@ -1,0 +1,128 @@
+.mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-family: var(--bp-mono);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.win {
+  background: var(--bp-up);
+  color: var(--bp-on-accent);
+}
+
+.loss {
+  background: var(--bp-down);
+  color: #2a0b10;
+}
+
+.push {
+  border-color: var(--bp-muted);
+  color: var(--bp-ink);
+}
+
+.void {
+  border-color: var(--bp-amber);
+  color: var(--bp-amber);
+}
+
+.none {
+  border-color: var(--bp-line);
+}
+
+.direction,
+.overUnder {
+  display: inline-block;
+  font-family: var(--bp-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.direction {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 7ch;
+}
+
+.triangle {
+  width: 0.62em;
+  height: 0.56em;
+  fill: currentColor;
+}
+
+.up {
+  color: var(--bp-up);
+}
+
+.down {
+  color: var(--bp-down);
+}
+
+.overUnder {
+  min-width: 5ch;
+  color: var(--bp-ink);
+}
+
+.muted {
+  color: var(--bp-muted);
+  font-weight: 400;
+}
+
+.large {
+  font-size: 20px;
+}
+
+.direction.large {
+  min-width: 0;
+}
+
+.pips {
+  display: inline-flex;
+  gap: 3px;
+  vertical-align: middle;
+}
+
+.pip,
+.pipOn {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+}
+
+.pip {
+  background: var(--bp-line);
+}
+
+.pipOn {
+  background: var(--bp-ink);
+}
+
+.strip {
+  display: block;
+  overflow: visible;
+}
+
+.axis {
+  stroke: var(--bp-line);
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+
+.barUp {
+  fill: var(--bp-up);
+  shape-rendering: crispEdges;
+}
+
+.barDown {
+  fill: var(--bp-down);
+  shape-rendering: crispEdges;
+}

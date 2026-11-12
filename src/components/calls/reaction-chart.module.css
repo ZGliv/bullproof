@@ -1,0 +1,117 @@
+.figure {
+  margin: 0;
+  padding: 0 48px 0 0;
+}
+
+.plot {
+  position: relative;
+  height: 168px;
+  margin: 20px 0;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.axis,
+.lineMark {
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  shape-rendering: crispEdges;
+}
+
+.axis {
+  stroke: var(--bp-muted);
+}
+
+.lineMark {
+  stroke: var(--bp-line);
+}
+
+.up {
+  fill: var(--bp-up);
+}
+
+.down {
+  fill: var(--bp-down);
+}
+
+.value,
+.lineLabel {
+  position: absolute;
+  color: var(--bp-ink);
+  font-family: var(--bp-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.value {
+  transform: translateX(-50%);
+}
+
+.above {
+  margin-top: -18px;
+}
+
+.below {
+  margin-top: 2px;
+}
+
+.lineLabel {
+  left: 100%;
+  padding-left: 8px;
+  color: var(--bp-muted);
+  transform: translateY(-50%);
+}
+
+.ticks {
+  display: flex;
+  border-top: 0;
+}
+
+.tick {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  color: var(--bp-muted);
+  font-family: var(--bp-mono);
+  font-size: 11px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+
+.empty {
+  padding: 12px 0;
+  color: var(--bp-muted);
+  font-family: var(--bp-mono);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .figure {
+    padding-right: 40px;
+  }
+
+  .value {
+    font-size: 11px;
+  }
+
+  .day {
+    display: none;
+  }
+}

@@ -37,7 +37,8 @@ const pending = new Map<string, Promise<Cached<unknown>>>();
 /** In-process gate: no more than three SEC request starts / second. Shared fleet coordination is not provided. */
 let gate: Promise<void> = Promise.resolve();
 let lastRequest = 0;
-async function secJson<T>(url: string): Promise<T> {
+/** Gated SEC GET with the app's User-Agent and timeout. Callers read the body and handle non-OK statuses. */
+export async function secResponse(url: string, accept = "application/json"): Promise<Response> {
   const turn = gate.then(async () => {
     const wait = Math.max(0, 350 - (Date.now() - lastRequest));
     if (wait) await new Promise((resolve) => setTimeout(resolve, wait));
@@ -45,12 +46,15 @@ async function secJson<T>(url: string): Promise<T> {
   });
   gate = turn.catch(() => {});
   await turn;
+  return fetch(url, {
+    headers: { "User-Agent": USER_AGENT, Accept: accept },
+    signal: AbortSignal.timeout(12_000),
+    cache: "no-store",
+  });
+}
+async function secJson<T>(url: string): Promise<T> {
   try {
-    const response = await fetch(url, {
-      headers: { "User-Agent": USER_AGENT, Accept: "application/json" },
-      signal: AbortSignal.timeout(12_000),
-      cache: "no-store",
-    });
+    const response = await secResponse(url);
     if (!response.ok)
       throw new ResearchError(
         `SEC returned HTTP ${response.status}. Try again later.`,
@@ -63,7 +67,7 @@ async function secJson<T>(url: string): Promise<T> {
     );
   }
 }
-async function cached<T>(
+export async function cached<T>(
   key: string,
   load: () => Promise<T>,
   ttl = TTL,
@@ -104,7 +108,7 @@ async function cached<T>(
   return work;
 }
 
-async function universe(): Promise<Cached<ListedCompany[]>> {
+export async function universe(): Promise<Cached<ListedCompany[]>> {
   return cached(
     "universe",
     async () => {

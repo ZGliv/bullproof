@@ -12,7 +12,8 @@
   },
   "triggers": {
     "crons": [
-      "5,35 13-21 * * MON-FRI"
+      "30,45 1 * * MON-FRI",
+      "45 22 * * MON-FRI"
     ]
   },
   "d1_databases": [

@@ -1,0 +1,92 @@
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  min-height: 48px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--bp-line);
+}
+
+.item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.season {
+  color: var(--bp-ink);
+  font-family: var(--bp-mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.label {
+  color: var(--bp-muted);
+  font-size: 12px;
+}
+
+.value {
+  color: var(--bp-ink);
+  font-family: var(--bp-mono);
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.sub {
+  color: var(--bp-muted);
+  font-family: var(--bp-mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.marks {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: auto;
+}
+
+.markLink {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+}
+
+.win {
+  background: var(--bp-up);
+}
+
+.loss {
+  background: var(--bp-down);
+}
+
+.push {
+  background: var(--bp-muted);
+}
+
+.void {
+  background: var(--bp-amber);
+}
+
+.empty {
+  border: 1px solid var(--bp-line);
+}
+
+@media (max-width: 640px) {
+  .strip {
+    gap: 8px 16px;
+  }
+
+  .marks {
+    margin-left: 0;
+  }
+}

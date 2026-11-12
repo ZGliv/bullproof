@@ -1,9 +1,3 @@
-@font-face {
-  font-family: ResearchSerif;
-  src: url("/directions/fonts/serif.ttf") format("truetype");
-  font-weight: 400;
-  font-display: swap;
-}
 .research-app {
   --paper: #151b25;
   --surface: #1c2533;

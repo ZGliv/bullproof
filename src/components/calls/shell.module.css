@@ -1,0 +1,158 @@
+/* Element rules from the legacy stylesheets can still be loaded after a client-side visit to
+   /research, so every element here sets the properties it relies on through its own class. */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--bp-bg);
+  color: var(--bp-ink);
+  font-family: var(--bp-sans);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Doubled class outranks the legacy body.after-hours focus rule if that sheet is still loaded. */
+.page.page :focus-visible {
+  outline: 1px solid var(--bp-accent);
+  outline-offset: 2px;
+}
+
+.header {
+  border-bottom: 1px solid var(--bp-line);
+  background: var(--bp-bg);
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: 1200px;
+  height: 48px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.wordmark {
+  color: var(--bp-ink);
+}
+
+.nav {
+  display: flex;
+  align-self: stretch;
+  gap: 16px;
+  min-width: 0;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
+  color: var(--bp-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.navLink:hover {
+  color: var(--bp-ink);
+}
+
+.navLink[aria-current="page"] {
+  color: var(--bp-ink);
+  border-bottom-color: var(--bp-accent);
+}
+
+.locked {
+  margin-left: auto;
+  color: var(--bp-muted);
+  font-family: var(--bp-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lockedLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px 32px;
+}
+
+.footer {
+  display: block;
+  width: 100%;
+  max-width: 1200px;
+  min-height: 0;
+  margin: 0 auto;
+  padding: 0 24px;
+  border: 0;
+}
+
+.footerInner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding: 12px 8px 16px;
+  border-top: 1px solid var(--bp-line);
+  color: var(--bp-muted);
+  font-size: 12px;
+}
+
+.stateRow {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--bp-line);
+  color: var(--bp-muted);
+  font-family: var(--bp-mono);
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .headerInner {
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .wordmark {
+    display: none;
+  }
+
+  .lockedLabel {
+    display: none;
+  }
+
+  .main {
+    padding: 0 16px 24px;
+  }
+
+  .footer {
+    padding: 0 16px;
+  }
+}
